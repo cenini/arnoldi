@@ -9,7 +9,7 @@ import { ChatModule } from './modules/chat/chat.module.js'
 class AppModule {}
 
 async function main () {
-  process.env.NEST_DEBUG = "truthy"
+  // process.env.NEST_DEBUG = "truthy"
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(8080);

@@ -16,6 +16,7 @@ export class ChatController {
 
     @Post()
     async prompt(@Body() prompt: PromptDto) {
-        return await this.llmService.call(prompt.text);
+        // return await this.llmService.call(prompt.text);
+        return await this.llmService.chain(prompt.text);
     }
 }
