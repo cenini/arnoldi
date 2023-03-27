@@ -16,7 +16,7 @@
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "langchain": "^0.0.36",
+    "langchain": "^0.0.41",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "serpapi": "^1.1.1"

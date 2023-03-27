@@ -2,16 +2,18 @@ import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { OpenAI } from "langchain/llms";
 import { ChatOpenAI } from "langchain/chat_models";
 import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
-import { ConversationChain, LLMChain } from 'langchain/chains';
+import { ConversationChain, LLMChain, ConversationalRetrievalQAChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
 import { ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate } from 'langchain/prompts';
 import { Calculator, SerpAPI } from 'langchain/tools';
 import { Agent, AgentExecutor, ChatAgent, initializeAgentExecutor, ZeroShotAgent } from 'langchain/agents';
+import { ChatGPTPluginRetriever } from 'langchain/retrievers';
 
 // const chat = new ChatOpenAI({ temperature: 0 });
 
 @Injectable()
 export class LlmService implements OnModuleInit {
+  private crc: ConversationalRetrievalQAChain | null = null;
   private conversationChain: ConversationChain | null = null;
   private agentExecutor?: AgentExecutor | null = null;
   private agent?: Agent | null = null;
@@ -38,6 +40,15 @@ export class LlmService implements OnModuleInit {
       prompt: chatPrompt,
       llm: this.chat,
     });
+
+    //// Will add the retrieval later, based on something like this (still being developed quite intensely it seems)
+    // this.conversationChain = new ConversationChain({
+    //   memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
+    //   prompt: chatPrompt,
+    //   llm: this.chat,
+    // });
+    // this.conversationChain = new ConversationalRetrievalQAChain(ChatGPTPluginRetriever);
+
 
     //// Should make some kind of agent here eventually... so it can use other tools as well.
     // this.agent = new ZeroShotAgent({llmChain: this.conversationChain, allowedTools: ["search", "calculator"]})
