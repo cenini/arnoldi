@@ -4,22 +4,32 @@
     timestamp: Date;
     sentByUser: boolean;
   }
-
+  
   export let messages: Message[] = [];
 
-  // function sendMessage(event: Event) {
-  //   event.preventDefault();
-  //   const input = (event.target as HTMLFormElement).querySelector('input[type=text]') as HTMLInputElement;
-  //   messages = [...messages, { text: input.value, timestamp: new Date(), sentByUser: true }];
-  //   input.value = '';
-  // }
-  function sendMessage(event: Event) {
-    console.log("HERE")
+  async function sendMessage(event: Event) {
+    // disable submit button until an answer is retrieved
     event.preventDefault();
     const input = (event.target as HTMLFormElement).querySelector('input[type=text]') as HTMLInputElement;
-    messages = [...messages, { text: input.value, timestamp: new Date(), sentByUser: true }];
+
+    // Make the API call
+    const response = await fetch('http://localhost:8080/chat', {
+      method: 'POST',
+      body: JSON.stringify({ text: input.value }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // Check if the response was successful
+    if (!response.ok) {
+      throw new Error('Failed to send message');
+    }
+
+    // Add the new message to the messages array
+    const newMessage = (await response.json()).message;
+    messages = [...messages, { ...newMessage, sentByUser: true }];
     input.value = '';
-    console.log(messages)
   }
 
   function getClass(message: Message) {

@@ -1,6 +1,6 @@
 import { Inject, Controller, Body, Get, Post} from '@nestjs/common';
-import { PromptDto } from './prompt.dto.js';
 import { LlmService } from './llm.service.js';
+import { PromptDto } from './prompt.dto.js';
 
 @Controller('chat')
 export class ChatController {
@@ -17,6 +17,6 @@ export class ChatController {
     @Post()
     async prompt(@Body() prompt: PromptDto) {
         // return await this.llmService.call(prompt.text);
-        return await this.llmService.chain(prompt.text);
+        return { message: await this.llmService.chain(prompt.text) };
     }
 }

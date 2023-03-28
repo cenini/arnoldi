@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { OpenAI } from 'langchain';
+// import { OpenAI } from "langchain/llms";
+import { ChatOpenAI } from "langchain/chat_models";
 import { ChatController } from './chat.controller.js';
 import { LlmService } from './llm.service.js';
-import { OpenAI } from "langchain/llms";
-import { ChatOpenAI } from "langchain/chat_models";
 
 @Module({
     controllers: [ChatController],
