@@ -1,7 +1,7 @@
 <script lang="ts">
   interface Message {
     text: string;
-    timestamp: Date;
+    // timestamp: Date;
     sentByUser: boolean;
   }
   
@@ -11,9 +11,10 @@
     // disable submit button until an answer is retrieved
     event.preventDefault();
     const input = (event.target as HTMLFormElement).querySelector('input[type=text]') as HTMLInputElement;
+    messages = [...messages, { text: input.value, sentByUser: true }];
 
     // Make the API call
-    const response = await fetch('http://localhost:8080/chat', {
+    const response = await fetch('http://localhost:3000/chat', {
       method: 'POST',
       body: JSON.stringify({ text: input.value }),
       headers: {
@@ -21,14 +22,17 @@
       }
     });
 
+    console.log(response)
+
     // Check if the response was successful
     if (!response.ok) {
       throw new Error('Failed to send message');
     }
 
+    const responseJson = (await response.json());
+    console.log(responseJson);
     // Add the new message to the messages array
-    const newMessage = (await response.json()).message;
-    messages = [...messages, { ...newMessage, sentByUser: true }];
+    messages = [...messages, { text: responseJson.message, sentByUser: true }];
     input.value = '';
   }
 
@@ -42,7 +46,7 @@
     {#each messages as message, index}
     <div class="max-w-md mx-auto my-2 {getClass(message)}" style="border-radius: 8px; padding: 12px;">
       <p class="text-sm">{message.text}</p>
-      <p class="text-xs text-gray-500">{message.timestamp.toLocaleTimeString()}</p>
+      <!-- <p class="text-xs text-gray-500">{message.timestamp.toLocaleTimeString()}</p> -->
     </div>
   {/each}
   </div>
