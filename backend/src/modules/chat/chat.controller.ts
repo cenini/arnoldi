@@ -16,10 +16,10 @@ export class ChatController {
 
     @Post()
     async prompt(@Body() prompt: PromptDto) {
-      console.log("Got a request")
+      // // console.log(`Got a request with text: ${prompt.text}`)
       // return { message: "TEST RESPONSE HERE" }
       const message = await this.llmService.chain(prompt.text);
-      console.log(message)
+      // console.log(message)
       return { message: message.response };
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit, InternalServerErrorException } from '@nestjs/common';
 import { OpenAI } from "langchain/llms";
 import { ChatOpenAI } from "langchain/chat_models";
 import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
@@ -29,7 +29,9 @@ export class LlmService implements OnModuleInit {
       SystemMessagePromptTemplate.fromTemplate(
         // "The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know."
         // "The following is a conversation between a human and an AI. The AI only answers questions with \"Yes\" or \"No\"."
-        "The following is a conversation between a human and its AI life coach. The AI always aims to be helpful, providing support and direction where possible. The AI asks questions that brings the human closer to its immediate and long term goals."
+        // "The following is a conversation between a human and their life-coach, the Austrian-American actor and retired governor Arnold Schwarzenegger. Arnold always aims to be helpful, providing support and direction where possible. Arnold asks questions that brings the human closer to its immediate and long term goals, while purely embodying the personality of actor Arnold Schwarzenegger."
+        "The following is a conversation between a human and their life-coach, the Austrian-American actor and retired governor Arnold Schwarzenegger. Arnold, although a total badass, always aims to be helpful, providing support and direction where possible. Arnold asks questions that brings the human closer to its immediate and long term goals, while purely embodying the personality of actor Arnold Schwarzenegger. Arnold always keeps is answers short and concise, and often refers to his experiences in body-building and acting."
+        // "Conversation between a human with little direction in life and Arnold Schwarzenegger (badass Austrian-American actor and governor):"
       ),
       new MessagesPlaceholder("history"),
       HumanMessagePromptTemplate.fromTemplate("{input}"),
@@ -82,6 +84,10 @@ export class LlmService implements OnModuleInit {
   }
 
   async chain(input: string) {
-    return await this.conversationChain?.call({input})
+    if (!this.isInitialized) {
+      throw new InternalServerErrorException();
+    }
+    // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
+    return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
   }  
 }
