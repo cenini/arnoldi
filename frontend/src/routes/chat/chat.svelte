@@ -40,31 +40,28 @@
     }
 
     const responseJson = (await response.json());
-    console.log(responseJson);
+    // console.log(responseJson);
     // Add the new message to the messages array
     messages = [...messages, { text: responseJson.message, sentByUser: false }];
+    input.focus();
 	}
 
 </script>
 
-
-<div class="h-screen bg-white flex items-center justify-center">
-  <div class="w-full max-w-md bg-gray-100 rounded-lg shadow-lg p-6">
+<div class="flex h-screen">
+  <div class="w-full max-w-2xl m-auto bg-gray-100 rounded-lg shadow-lg p-6 flex-col">
     <div class="font-bold text-xl mb-4">aime</div>
-    <div class="border border-gray-300 p-4 rounded-lg">
-      <div class="chat chat-start">
-        <div>
-          {#each messages as message, index}
-          <div class="{getChatStartOrEnd(message)}">
-            <p class="{getChatPrimaryOrSecondary(message)}">{message.text}</p>
-            <!-- <p class="text-xs text-gray-500">{message.timestamp.toLocaleTimeString()}</p> -->
+        <div class="h-96 border border-gray-300 p-4 rounded-lg overflow-y-scroll">
+          <div>
+            {#each messages as message, index}
+            <div class="{getChatStartOrEnd(message)}">
+              <p class="{getChatPrimaryOrSecondary(message)}">{message.text}</p>
+            </div>
+            {/each}
           </div>
-        {/each}
-        </div>
       </div>
-    </div>
-    <form class="mt-4">
-      <div class="flex">
+    <form class="mt-4 sticky bottom-0 flex">
+      <div class="flex-1">
         <input bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-primary w-full max-w-xs"/>
         <button class="btn" on:click={()=>sendMessage(input)}>Send</button>
       </div>

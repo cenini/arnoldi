@@ -5,9 +5,14 @@
 </script>
 
 <style lang="postcss">
-  :global(html) {
+  /* :global(html) {
     background-color: theme(colors.gray.100);
+  } */
+  .chat-container {
+    height: 100vh;
   }
 </style>
 
-<Chat/>
+<div class="chat-container">
+  <Chat />
+</div>
