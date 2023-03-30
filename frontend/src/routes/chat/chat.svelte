@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { tick } from "svelte";
+
+
   interface Message {
     text: string;
     // timestamp: Date;
@@ -8,12 +11,22 @@
   export let messages: Message[] = [];
   let input: HTMLInputElement;
   let newInputValue = '';
+  let readyToSend = true;
 
   function getChatStartOrEnd(message: Message) {
     return message.sentByUser ? 'chat chat-start' : 'chat chat-end';
   }
+
   function getChatPrimaryOrSecondary(message: Message) {
-    return message.sentByUser ? 'chat-bubble chat-bubble-primary' : 'chat-bubble chat-bubble-secondary';
+    return message.sentByUser ? 'chat-bubble chat-bubble-primary' : 'chat-bubble chat-bubble-success';
+  }
+
+  async function triggerSendMessage(input: HTMLInputElement): Promise<void> {
+    readyToSend = false;
+    await sendMessage(input);
+    readyToSend = true;
+    await tick();
+    input.focus();
   }
 
 	async function sendMessage(input: HTMLInputElement): Promise<void> {
@@ -22,28 +35,40 @@
     input.value = '';
 
     // Make the API call
-    const response = await fetch('http://localhost:3000/chat', {
+    let response: Response | null = null;
+    try {
+      response = await fetch('http://localhost:3000/chat', {
       method: 'POST',
       body: JSON.stringify({ text: bodyText }),
       headers: {
         'Content-Type': 'application/json'
       }
     });
+    } catch (error) {
+      // log it! 
+      console.log(error);
+      // Post an error in the chat!
+      messages = [...messages, { text: "There was an unexpected error", sentByUser: false}] // want this to be the error color
+      return;
+    }
+
     // Should try/catch here so we can add an error message in the chat if something goes wrong
 
     console.log(response)
 
     // Check if the response was successful
-    if (!response.ok) {
-      throw new Error('Failed to send message');
-      // Add an error message in the chat
+    if (!response?.ok) {
+      console.log(response);
+      // Post an error in the chat!
+      messages = [...messages, { text: "There was an unexpected error", sentByUser: false}] // want this to be the error color
+      readyToSend = true;
+      return;
     }
 
     const responseJson = (await response.json());
     // console.log(responseJson);
     // Add the new message to the messages array
     messages = [...messages, { text: responseJson.message, sentByUser: false }];
-    input.focus();
 	}
 
 </script>
@@ -62,8 +87,8 @@
       </div>
     <form class="mt-4 sticky bottom-0 flex">
       <div class="flex-1">
-        <input bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-primary w-full max-w-xs"/>
-        <button class="btn" on:click={()=>sendMessage(input)}>Send</button>
+        <input disabled='{!readyToSend}' bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-primary w-full max-w-xs"/>
+        <button disabled='{!readyToSend}' class="btn" on:click={()=>triggerSendMessage(input)}>Send</button>
       </div>
     </form>
   </div>
