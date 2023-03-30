@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { tick } from "svelte";
 
-
   interface Message {
     text: string;
     // timestamp: Date;
@@ -9,6 +8,7 @@
   }
   
   export let messages: Message[] = [];
+  const sessionId: string = crypto.randomUUID();
   let chat: HTMLDivElement; 
   let input: HTMLInputElement;
   let newInputValue = '';
@@ -44,7 +44,7 @@
     // Make the API call
     const response = await fetch('http://localhost:3000/chat', {
         method: 'POST',
-        body: JSON.stringify({ text: input.value }),
+        body: JSON.stringify({ text: input.value, sessionId: sessionId }),
         headers: {
           'Content-Type': 'application/json'
         }
