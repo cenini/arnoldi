@@ -9,6 +9,7 @@
   }
   
   export let messages: Message[] = [];
+  let chat: HTMLDivElement; 
   let input: HTMLInputElement;
   let newInputValue = '';
   let readyToSend = true;
@@ -21,62 +22,50 @@
     return message.sentByUser ? 'chat-bubble chat-bubble-primary' : 'chat-bubble chat-bubble-success';
   }
 
+  function scrollToBottom() {
+    chat.scrollTop = chat.scrollHeight;
+  }
+
   async function triggerSendMessage(input: HTMLInputElement): Promise<void> {
     readyToSend = false;
-    await sendMessage(input);
+    try {
+      addMessageToList(input.value, true);
+      addMessageToList(await sendMessage(input), false);
+    } catch (error) {
+      addMessageToList("There was an unexpected error", false);
+    }
+    scrollToBottom();
     readyToSend = true;
     await tick();
     input.focus();
   }
 
-	async function sendMessage(input: HTMLInputElement): Promise<void> {
-    var bodyText = input.value;
-    messages = [...messages, { text: input.value, sentByUser: true }];
-    input.value = '';
-
+	async function sendMessage(input: HTMLInputElement): Promise<string> {
     // Make the API call
-    let response: Response | null = null;
-    try {
-      response = await fetch('http://localhost:3000/chat', {
-      method: 'POST',
-      body: JSON.stringify({ text: bodyText }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    } catch (error) {
-      // log it! 
-      console.log(error);
-      // Post an error in the chat!
-      messages = [...messages, { text: "There was an unexpected error", sentByUser: false}] // want this to be the error color
-      return;
-    }
-
-    // Should try/catch here so we can add an error message in the chat if something goes wrong
+    const response = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        body: JSON.stringify({ text: input.value }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    input.value = '';
 
     console.log(response)
 
-    // Check if the response was successful
-    if (!response?.ok) {
-      console.log(response);
-      // Post an error in the chat!
-      messages = [...messages, { text: "There was an unexpected error", sentByUser: false}] // want this to be the error color
-      readyToSend = true;
-      return;
-    }
-
-    const responseJson = (await response.json());
-    // console.log(responseJson);
-    // Add the new message to the messages array
-    messages = [...messages, { text: responseJson.message, sentByUser: false }];
+    return (await response.json()).message;
 	}
+
+  function addMessageToList(text: string, sentByUser: boolean) {
+    messages = [...messages, { text: text, sentByUser: sentByUser }];
+  }
 
 </script>
 
 <div class="flex h-screen">
   <div class="w-full max-w-2xl m-auto bg-gray-100 rounded-lg shadow-lg p-6 flex-col">
     <div class="font-bold text-xl mb-4">aime</div>
-        <div class="h-96 border border-gray-300 p-4 rounded-lg overflow-y-scroll">
+        <div class="h-96 border border-gray-300 p-4 rounded-lg overflow-y-scroll" bind:this={chat}>
           <div>
             {#each messages as message, index}
             <div class="{getChatStartOrEnd(message)}">
