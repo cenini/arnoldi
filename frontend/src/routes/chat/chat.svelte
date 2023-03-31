@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { tick } from "svelte";
+  import { env } from '$env/dynamic/public';
 
   interface Message {
     text: string;
@@ -41,8 +42,9 @@
   }
 
 	async function sendMessage(input: HTMLInputElement): Promise<string> {
+    console.log(env.PUBLIC_BACKEND_URL)
     // Make the API call
-    const response = await fetch('http://localhost:3000/chat', {
+    const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
         method: 'POST',
         body: JSON.stringify({ text: input.value, sessionId: sessionId }),
         headers: {
@@ -51,7 +53,7 @@
       });
     input.value = '';
 
-    console.log(response)
+    // console.log(response)
 
     return (await response.json()).message;
 	}
