@@ -40,9 +40,6 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: "${{ github.server_url }}/${{ github.repository }}.git#${{ github.ref }}:${{ env.CONTEXT_SUBDIR }}"
-        # context: "{{defaultContext}}:backend"
-        # context: ./backend
-        # file: ./backend/Dockerfile
         push: true
         tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}
         secrets: |

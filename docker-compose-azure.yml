@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  frontend:
+    image: ninipriv/aime:frontend_0.1_4589669165
+    environment:
+      - PORT=3000
+    ports:
+      - 8080:3000
+  backend:
+    image: ninipriv/aime:backend_0.1_4589006674
+    ports:
+      - 3000:3000
+    networks:
+      - aime
+
+networks:
+  aime:

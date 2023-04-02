@@ -4,12 +4,11 @@ services:
   frontend:
     image: frontend:latest
     environment:
-      - PORT=80
+      - PORT=3000
     ports:
-      - 8080:80
+      - 8080:3000
   backend:
     image: backend:latest
-    # environment: #secrets and environment variables here
     ports:
       - 3000:3000
     networks:
