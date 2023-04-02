@@ -45,3 +45,5 @@ jobs:
         # file: ./backend/Dockerfile
         push: true
         tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}
+        secrets: |
+          GIT_AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
