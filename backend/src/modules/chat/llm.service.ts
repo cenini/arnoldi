@@ -9,7 +9,6 @@ import { Calculator, SerpAPI } from 'langchain/tools';
 import { Agent, AgentExecutor, ChatAgent, initializeAgentExecutor, ZeroShotAgent } from 'langchain/agents';
 import { ChatGPTPluginRetriever } from 'langchain/retrievers';
 
-// const chat = new ChatOpenAI({ temperature: 0 });
 
 @Injectable()
 export class LlmService implements OnModuleInit {
