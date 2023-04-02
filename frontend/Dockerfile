@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install the dependencies
-RUN npm ci --omit dev
+RUN npm ci
 
 # Copy the source code of the Svelte app to the working directory
 COPY . .
