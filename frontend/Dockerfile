@@ -1,29 +1,23 @@
-# Build stage
-FROM node:lts AS build
+# Use the official Node.js image as the base image
+FROM node:16
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json files to the working directory
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install the dependencies
+RUN npm ci --omit dev
 
-# Copy the rest of the application code to the working directory
+# Copy the source code of the Svelte app to the working directory
 COPY . .
 
-# Build the Svelte application
+# Build the Svelte app using the Node adapter
 RUN npm run build
 
-# Production stage
-FROM nginx:stable-alpine
+# Expose the port that the app will run on
+EXPOSE 3000
 
-# Copy the built Svelte app from the build stage to the nginx HTML directory
-COPY --from=build /app/public /usr/share/nginx/html
-
-# Expose the default nginx port
-EXPOSE 80
-
-# Start the nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start the application using the Node adapter
+CMD ["node", "./build/index.js"]

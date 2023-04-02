@@ -1,12 +1,19 @@
 version: '3.4'
 
 services:
-  proach:
-    image: proach
-    build:
-      context: proach
-      dockerfile: ./Dockerfile
+  frontend:
+    image: frontend:latest
     environment:
-      NODE_ENV: production
+      - PORT=80
+    ports:
+      - 8080:80
+  backend:
+    image: backend:latest
+    # environment: #secrets and environment variables here
     ports:
       - 3000:3000
+    networks:
+      - aime
+
+networks:
+  aime:
