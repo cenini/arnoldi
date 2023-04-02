@@ -38,6 +38,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: .
+        context: ./backend
+        # file: ./Dockerfile
         push: true
         tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}
