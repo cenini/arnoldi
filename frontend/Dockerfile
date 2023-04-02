@@ -19,5 +19,7 @@ RUN npm run build
 # Expose the port that the app will run on
 EXPOSE 3000
 
+# ENV HOST=
+
 # Start the application using the Node adapter
 CMD ["node", "./build/index.js"]
