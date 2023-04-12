@@ -9,6 +9,9 @@ services:
       - 80:3000
   backend:
     image: ninipriv/aime:backend_0.1_4589006674
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
     ports:
       - 3000:3000
     networks:
