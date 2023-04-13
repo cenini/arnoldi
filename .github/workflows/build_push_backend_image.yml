@@ -41,6 +41,6 @@ jobs:
       with:
         context: "${{ github.server_url }}/${{ github.repository }}.git#${{ github.ref }}:${{ env.CONTEXT_SUBDIR }}"
         push: true
-        tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}
+        tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}, ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_latest
         secrets: |
           GIT_AUTH_TOKEN=${{ secrets.CLASSIC_AUTH_TOKEN }}
