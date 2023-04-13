@@ -16,6 +16,16 @@ services:
       - 3000:3000
     networks:
       - aime
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    ports:
+      - 80:80
+      - 443:443
+      
 
 networks:
   aime:
