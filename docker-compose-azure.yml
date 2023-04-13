@@ -30,6 +30,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    networks:
+      - aime
     depends_on:
       backend:
         condition: service_healthy
