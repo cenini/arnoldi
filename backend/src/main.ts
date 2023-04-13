@@ -15,9 +15,7 @@ async function bootstrap() {
     credentials: true
   };
 
-  app.enableCors(options);  
-  // app.setGlobalPrefix('api') // not so cool
-  
+  app.enableCors(options);    
   await app.listen(3000);
 }
 bootstrap();

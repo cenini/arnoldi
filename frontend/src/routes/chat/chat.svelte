@@ -20,7 +20,7 @@
   }
 
   function getChatPrimaryOrSecondary(message: Message) {
-    return message.sentByUser ? 'chat-bubble chat-bubble-primary' : 'chat-bubble chat-bubble-success';
+    return message.sentByUser ? 'chat-bubble chat-bubble-accent' : 'chat-bubble chat-bubble-success text-white';
   }
 
   function scrollToBottom() {
@@ -43,6 +43,7 @@
 
 	async function sendMessage(input: HTMLInputElement): Promise<string> {
     console.log(env.PUBLIC_BACKEND_URL)
+    await new Promise(r => setTimeout(r, 2000));
     // Make the API call
     const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
         method: 'POST',
@@ -64,10 +65,10 @@
 
 </script>
 
-<div class="flex h-screen">
-  <div class="w-full max-w-2xl m-auto bg-gray-100 rounded-lg shadow-lg p-6 flex-col">
+<div class="flex h-screen bg-neutral-focus  ">
+  <div class="w-full max-w-2xl m-auto bg-base-200 rounded-lg shadow-lg p-6 flex-col">
     <div class="font-bold text-xl mb-4">aime</div>
-        <div class="h-96 border border-gray-300 p-4 rounded-lg overflow-y-scroll" bind:this={chat}>
+        <div class="h-96 border p-4 rounded-lg overflow-y-scroll" bind:this={chat}>
           <div>
             {#each messages as message, index}
             <div class="{getChatStartOrEnd(message)}">
@@ -78,8 +79,8 @@
       </div>
     <form class="mt-4 sticky bottom-0 flex">
       <div class="flex-1">
-        <input disabled='{!readyToSend}' bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-primary w-full max-w-xs"/>
-        <button disabled='{!readyToSend}' class="btn" on:click={()=>triggerSendMessage(input)}>Send</button>
+        <input disabled='{!readyToSend}' bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-accent w-full max-w-xs"/>
+        <button disabled='{!readyToSend}' class="{readyToSend ? 'btn' : 'btn loading'}" on:click={()=>triggerSendMessage(input)}>{readyToSend ? "Send" : "Answering..."}</button>
       </div>
     </form>
   </div>
