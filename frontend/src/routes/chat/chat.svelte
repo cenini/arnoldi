@@ -43,7 +43,7 @@
 
 	async function sendMessage(input: HTMLInputElement): Promise<string> {
     console.log(env.PUBLIC_BACKEND_URL)
-    await new Promise(r => setTimeout(r, 2000));
+    // await new Promise(r => setTimeout(r, 2000)); // Only sleep when needed!
     // Make the API call
     const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
         method: 'POST',
