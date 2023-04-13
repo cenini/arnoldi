@@ -7,6 +7,8 @@ services:
       - PORT=3000
     ports:
       - 8080:3000
+    networks:
+      - aime
   backend:
     image: ninipriv/aime:backend_0.1_4691318232
     environment:
