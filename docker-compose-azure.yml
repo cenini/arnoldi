@@ -5,15 +5,20 @@ services:
     image: ninipriv/aime:frontend_0.1_4691339334
     environment:
       - PORT=3000
-    # ports:
-    #   - 8080:3000
+    ports:
+      - 8080:3000
   backend:
     image: ninipriv/aime:backend_0.1_4691318232
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
-    # ports:
-    #   - 3000:3000
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3    
     networks:
       - aime
   nginx:
@@ -25,6 +30,9 @@ services:
     ports:
       - 80:80
       - 443:443
+    depends_on:
+      backend:
+        condition: service_healthy
       
 
 networks:
