@@ -5,7 +5,9 @@ services:
     image: ninipriv/aime:frontend_0.1_4691339334
     environment:
       - PORT=3000
-      - PUBLIC_BACKEND_URL=https://167.99.130.48/api
+      - PUBLIC_BACKEND_URL=${PUBLIC_BACKEND_URL}
+      # - PUBLIC_BACKEND_URL=https://167.99.130.48/api
+      # - PUBLIC_BACKEND_URL=https://localhost/api
     ports:
       - 8080:3000
     networks:
