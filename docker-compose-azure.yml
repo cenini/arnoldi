@@ -13,7 +13,7 @@ services:
     networks:
       - proach_aime
   backend:
-    image: ninipriv/aime:backend_0.1_4692817675
+    image: ninipriv/aime:backend_latest
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
