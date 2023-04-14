@@ -23,7 +23,7 @@ services:
       test: ["CMD", "curl", "--fail", "http://localhost:3000"]
       interval: 10s
       timeout: 5s
-      retries: 3    
+      retries: 3
     networks:
       - proach_aime
   nginx:
@@ -40,7 +40,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-      
 
 networks:
   proach_aime: 

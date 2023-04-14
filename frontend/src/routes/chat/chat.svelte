@@ -65,6 +65,7 @@
 
 </script>
 
+
 <div class="flex h-screen bg-neutral-focus  ">
   <div class="w-full max-w-2xl m-auto bg-base-200 rounded-lg shadow-lg p-6 flex-col">
     <div class="font-bold text-xl mb-4">aime</div>
@@ -77,11 +78,15 @@
             {/each}
           </div>
       </div>
-    <form class="mt-4 sticky bottom-0 flex">
-      <div class="flex-1">
-        <input disabled='{!readyToSend}' bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-accent w-full max-w-xs"/>
-        <button disabled='{!readyToSend}' class="{readyToSend ? 'btn' : 'btn loading'}" on:click={()=>triggerSendMessage(input)}>{readyToSend ? "Send" : "Answering..."}</button>
-      </div>
-    </form>
+      <form class="mt-4 sticky bottom-0 flex">
+        <div class="flex items-stretch w-full space-x-2">
+          <input disabled='{!readyToSend}' bind:this={input} bind:value={newInputValue} type="text" placeholder="Type here" class="input input-bordered input-accent flex-1"/>
+          <button disabled='{!readyToSend}' class="{readyToSend ? 'btn btn-square' : 'btn btn-square loading'}" on:click={()=>triggerSendMessage(input)}>
+            {#if readyToSend}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+            {/if}
+          </button>
+        </div>
+      </form>
   </div>
 </div>
