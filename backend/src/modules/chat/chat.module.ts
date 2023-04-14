@@ -10,13 +10,21 @@ import { LlmService } from './llm.service.js';
         {
           provide: 'OpenAI',
           useFactory: () => {
-            return new OpenAI({ temperature: 1 });
+            return new OpenAI(
+              { 
+                temperature: 1,
+                modelName: process.env["OPENAI_MODEL"] //"gpt-4"
+              });
           },
         },
         {
           provide: 'ChatOpenAI',
           useFactory: () => {
-            return new ChatOpenAI({ temperature: 1 })
+            return new ChatOpenAI(
+            { 
+              temperature: 1,
+              modelName: process.env["OPENAI_MODEL"] //"gpt-4"
+            })
           }
         },
         LlmService,
