@@ -25,7 +25,6 @@ export class ChatController {
 
       // // console.log(`Got a request with text: ${prompt.text}`)
       // await delay(1000);
-      // return { message: "TEST RESPONSE HERE" }
       const message = await this.llmService.chain(prompt.text);
       // console.log(message)
       return { message: message.response };

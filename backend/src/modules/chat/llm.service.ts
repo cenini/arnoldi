@@ -1,14 +1,15 @@
 import { Injectable, Inject, OnModuleInit, InternalServerErrorException } from '@nestjs/common';
-import { OpenAI } from "langchain/llms";
-import { ChatOpenAI } from "langchain/chat_models";
+import { OpenAI } from "langchain/llms/openai";
+import { ChatOpenAI } from "langchain/chat_models/openai";
 import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
 import { ConversationChain, LLMChain, ConversationalRetrievalQAChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
 import { ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate } from 'langchain/prompts';
-import { Calculator, SerpAPI } from 'langchain/tools';
 import { Agent, AgentExecutor, ChatAgent, initializeAgentExecutor, ZeroShotAgent } from 'langchain/agents';
 import { ChatGPTPluginRetriever } from 'langchain/retrievers';
-
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { VectorStore } from 'langchain/vectorstores/base';
 
 @Injectable()
 export class LlmService implements OnModuleInit {
@@ -20,7 +21,8 @@ export class LlmService implements OnModuleInit {
 
   constructor(
     @Inject('OpenAI') private readonly model: OpenAI,
-    @Inject('ChatOpenAI') private readonly chat: ChatOpenAI
+    @Inject('ChatOpenAI') private readonly chat: ChatOpenAI,
+    @Inject('VectorStore') private readonly vectorStore: VectorStore
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -47,38 +49,24 @@ export class LlmService implements OnModuleInit {
       llm: this.chat,
     });
 
-    //// Will add the retrieval later, based on something like this (still being developed quite intensely it seems)
-    // this.conversationChain = new ConversationChain({
-    //   memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
-    //   prompt: chatPrompt,
-    //   llm: this.chat,
+    // const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
+    // const docs = await textSplitter.createDocuments(["Some text here"]);
+    /* Create the vectorstore */
+    // const vectorStore = await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
+    //   collectionName: "goldel-escher-bach",
     // });
-    // this.conversationChain = new ConversationalRetrievalQAChain(ChatGPTPluginRetriever);
-
-
-    //// Should make some kind of agent here eventually... so it can use other tools as well.
-    // this.agent = new ZeroShotAgent({llmChain: this.conversationChain, allowedTools: ["search", "calculator"]})
-    // this.agentExecutor = AgentExecutor.fromAgentAndTools({agent: this.agent, tools: tools});
-
-    // // Define the list of tools the agent can use
-    // const tools = [new SerpAPI("")];
-    // // const agent = ChatAgent.fromLLMAndTools(this.chat, tools);
-    // // this.agentExecutor = AgentExecutor.fromAgentAndTools({ 
-    // //   agent, 
-    // //   tools, 
-    // //   prompt: chatPrompt,
-    // //   memory: new BufferMemory({ returnMessages: true, memoryKey: "history" })});
-    // this.agentExecutor = await initializeAgentExecutor(
-    //   tools,
-    //   this.chat,
-    //   "chat-conversational-react-description",
-    //   true
+    // const vectorStore = await Chroma.fromExistingCollection(
+    //   new OpenAIEmbeddings(),
+    //   {
+    //     collectionName: "chats",
+    //   }
     // );
-    // this.agentExecutor.memory = new BufferMemory({
-    //   returnMessages: true,
-    //   memoryKey: "chat_history",
-    //   inputKey: "input",
-    // });
+
+    /* Create the chain */
+    this.crc = ConversationalRetrievalQAChain.fromLLM(
+      this.model,
+      this.vectorStore.asRetriever()
+    );
 
     this.isInitialized = true;
   }
@@ -93,5 +81,6 @@ export class LlmService implements OnModuleInit {
     }
     // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
     return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
+    // return await this.crc?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
   }  
 }
