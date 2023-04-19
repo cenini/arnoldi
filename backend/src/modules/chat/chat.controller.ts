@@ -40,7 +40,7 @@ export class ChatController {
   //   };
   // }
 
-  @Post("EndSession")
+  @Post("endsession")
   async endSession(@Body() session: SessionDto) {
     return await this.llmService.storeSession(SessionDto.toObject(session));
   }

@@ -12,7 +12,7 @@ import { LlmService } from './llm.service.js';
 const chatCollection = "arnoldi-chats";
 const coachingCollection = "arnoldi-coaching";
 const arnoldCollection = "arnoldi-arnold";
-
+// 1536
 export async function buildExistingVectorStore(indexName: string): Promise<VectorStore> {
   // Return Chroma by default
   if (process.env["VECTOR_STORE"] === undefined) {
@@ -31,10 +31,9 @@ export async function buildExistingVectorStore(indexName: string): Promise<Vecto
     );
   }
   // Return Chroma by default
-  return await Chroma.fromExistingCollection(
-      new OpenAIEmbeddings(),
-      { collectionName: indexName }
-    );
+  const chroma = new Chroma(new OpenAIEmbeddings(), { collectionName: indexName, numDimensions: 1536 });
+  chroma.ensureCollection();
+  return chroma;
 }
 
 export async function buildVectorStoreFromTexts(indexName: string, texts: string[], metadatas: object[]): Promise<VectorStore> {
@@ -74,7 +73,8 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
           provide: "ChatStore",
           useFactory: async () => 
           { 
-            await buildExistingVectorStore(chatCollection) 
+            // return await buildVectorStoreFromTexts(chatCollection, ["Blabla"]);
+            return await buildExistingVectorStore(chatCollection);
           }
         },
         {
@@ -89,7 +89,7 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
         },
         {
           provide: "ArnoldStore",
-          useFactory: async () => { await buildExistingVectorStore(arnoldCollection) }
+          useFactory: async () => { return await buildExistingVectorStore(arnoldCollection) }
         },
         {
           provide: 'OpenAI',

@@ -80,17 +80,13 @@
   }
 
   async function sendSession(): Promise<void>{
-    const session = {
-      messages: [],
-      id: "testSessionId",
-      userId: "testUserId"
-    };
-
-    const messages = 
-
     await fetch(`${env.PUBLIC_BACKEND_URL}/chat/endsession`, { 
       method: 'POST',
-      body: JSON.stringify({ text: input.value, sessionId: sessionId }),
+      body: JSON.stringify({
+        messages: messages,
+        id: sessionId,
+        userId: "testUserId" // Actual user id here later, could also be taken from a cookie
+      }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -125,4 +121,5 @@
   </div>
 </div>
 
+<!-- beforeunload is more reliable than unload -->
 <svelte:window on:beforeunload={beforeUnload}/>

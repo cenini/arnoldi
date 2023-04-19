@@ -15,12 +15,14 @@ import { Session } from '../models/Session';
 import { buildExistingVectorStore, buildVectorStoreFromTexts } from './chat.module';
 import { Document } from "langchain/document";
 
-function createDocumentsFromSession(session: Session): Document<Record<string, any>>[] {
+async function createDocumentsFromSession(session: Session): Promise<Document<Record<string, any>>[]> {
   const documents: Document<Record<string, any>>[] = [];
+  const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
   for (const message of session.Messages) {
-    documents.push(new Document(
-      { 
-        pageContent: message.text, 
+    const docs = await textSplitter.createDocuments([message.text]);
+    for (const doc of docs) {
+      documents.push(new Document({ 
+        pageContent: doc.pageContent, 
         metadata: 
         { 
           sender: message.sender, 
@@ -28,6 +30,7 @@ function createDocumentsFromSession(session: Session): Document<Record<string, a
           userId: session.UserId 
         } 
       }));
+    }  
   }
   return documents;
 }
@@ -147,10 +150,14 @@ export class LlmService implements OnModuleInit {
     }
     // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
     // return { response: await this.executor?.run(`Human: ${input} \n Arnold Schwarzenegger: `)}
+    // return { response: "Hello world!" }
     return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
   }
 
   async storeSession(session: Session) {
-    this.chatStore.addDocuments(createDocumentsFromSession(session));
+    // Check if the session has already been saved or not before saving... (probably need to install chroma for that)
+    // this.chatStore.similaritySearch("", )
+    this.chatStore.addDocuments(await createDocumentsFromSession(session));
+    // const result = await this.chatStore.asRetriever().getRelevantDocuments("Challenges at work");
   }
 }
