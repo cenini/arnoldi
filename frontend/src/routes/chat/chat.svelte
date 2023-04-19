@@ -2,10 +2,20 @@
 	import { tick } from "svelte";
   import { env } from '$env/dynamic/public';
 
+  interface Session {
+    Messages: Message[];
+    Id: string;
+    UserId: string;
+  }
+
   interface Message {
     text: string;
-    // timestamp: Date;
-    sentByUser: boolean;
+    sender: Sender;
+  }
+
+  enum Sender {
+    User,
+    Ai
   }
   
   export let messages: Message[] = [];
@@ -16,11 +26,11 @@
   let readyToSend = true;
 
   function getChatStartOrEnd(message: Message) {
-    return message.sentByUser ? 'chat chat-start' : 'chat chat-end';
+    return message.sender == Sender.User ? 'chat chat-start' : 'chat chat-end';
   }
 
   function getChatPrimaryOrSecondary(message: Message) {
-    return message.sentByUser ? 'chat-bubble chat-bubble-accent' : 'chat-bubble chat-bubble-success text-white';
+    return message.sender == Sender.User ? 'chat-bubble chat-bubble-accent' : 'chat-bubble chat-bubble-success text-white';
   }
 
   function scrollToBottom() {
@@ -30,10 +40,10 @@
   async function triggerSendMessage(input: HTMLInputElement): Promise<void> {
     readyToSend = false;
     try {
-      addMessageToList(input.value, true);
-      addMessageToList(await sendMessage(input), false);
+      addMessageToList(input.value, Sender.User);
+      addMessageToList(await sendMessage(input), Sender.Ai);
     } catch (error) {
-      addMessageToList("There was an unexpected error", false);
+      addMessageToList("There was an unexpected error", Sender.Ai);
     }
     scrollToBottom();
     readyToSend = true;
@@ -42,7 +52,7 @@
   }
 
 	async function sendMessage(input: HTMLInputElement): Promise<string> {
-    console.log(env.PUBLIC_BACKEND_URL)
+    // console.log(env.PUBLIC_BACKEND_URL)
     // await new Promise(r => setTimeout(r, 2000)); // Only sleep when needed!
     // Make the API call
     const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
@@ -59,8 +69,32 @@
     return (await response.json()).message;
 	}
 
-  function addMessageToList(text: string, sentByUser: boolean) {
-    messages = [...messages, { text: text, sentByUser: sentByUser }];
+  function addMessageToList(text: string, sender: Sender) {
+    messages = [...messages, { text: text, sender: sender }];
+  }
+
+  async function beforeUnload(event: BeforeUnloadEvent) {
+    event.preventDefault();
+    await sendSession();
+    return event.returnValue = '';
+  }
+
+  async function sendSession(): Promise<void>{
+    const session = {
+      messages: [],
+      id: "testSessionId",
+      userId: "testUserId"
+    };
+
+    const messages = 
+
+    await fetch(`${env.PUBLIC_BACKEND_URL}/chat/endsession`, { 
+      method: 'POST',
+      body: JSON.stringify({ text: input.value, sessionId: sessionId }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 
 </script>
@@ -90,3 +124,5 @@
       </form>
   </div>
 </div>
+
+<svelte:window on:beforeunload={beforeUnload}/>
