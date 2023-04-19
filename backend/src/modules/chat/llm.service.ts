@@ -2,7 +2,7 @@ import { Injectable, Inject, OnModuleInit, InternalServerErrorException } from '
 import { OpenAI } from "langchain/llms/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
-import { ConversationChain, LLMChain, ConversationalRetrievalQAChain } from 'langchain/chains';
+import { ConversationChain, LLMChain, ConversationalRetrievalQAChain, VectorDBQAChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
 import { ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate } from 'langchain/prompts';
 import { Agent, AgentExecutor, ChatAgent, initializeAgentExecutor, ZeroShotAgent } from 'langchain/agents';
@@ -10,20 +10,43 @@ import { ChatGPTPluginRetriever } from 'langchain/retrievers';
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { VectorStore } from 'langchain/vectorstores/base';
+import { ChainTool, SerpAPI } from "langchain/tools";
+import { Session } from '../models/Session';
+import { buildExistingVectorStore, buildVectorStoreFromTexts } from './chat.module';
+import { Document } from "langchain/document";
+
+function createDocumentsFromSession(session: Session): Document<Record<string, any>>[] {
+  const documents: Document<Record<string, any>>[] = [];
+  for (const message of session.Messages) {
+    documents.push(new Document(
+      { 
+        pageContent: message.text, 
+        metadata: 
+        { 
+          sender: message.sender, 
+          sessionId: session.Id, 
+          userId: session.UserId 
+        } 
+      }));
+  }
+  return documents;
+}
 
 @Injectable()
 export class LlmService implements OnModuleInit {
   private crc: ConversationalRetrievalQAChain | null = null;
   private conversationChain: ConversationChain | null = null;
-  private agentExecutor?: AgentExecutor | null = null;
+  private executor?: AgentExecutor | null = null;
   private agent?: Agent | null = null;
   public isInitialized: boolean = false;
 
   constructor(
     @Inject('OpenAI') private readonly model: OpenAI,
     @Inject('ChatOpenAI') private readonly chat: ChatOpenAI,
-    @Inject('VectorStore') private readonly vectorStore: VectorStore
-  ) {}
+    @Inject('ChatStore') private readonly chatStore: VectorStore,
+    @Inject('CoachingStore') private readonly coachingStore: VectorStore,
+    @Inject('ArnoldStore') private readonly arnoldStore: VectorStore)
+   {}
 
   async onModuleInit(): Promise<void> {
     const chatPrompt = ChatPromptTemplate.fromPromptMessages([
@@ -56,17 +79,53 @@ export class LlmService implements OnModuleInit {
     //   collectionName: "goldel-escher-bach",
     // });
     // const vectorStore = await Chroma.fromExistingCollection(
-    //   new OpenAIEmbeddings(),
+    //   new OpenAIEmbeddings(),If provided, the ConversationalRetrievalQAChain will use this template to format a response before returning the result. This can be useful if you want to customize
     //   {
     //     collectionName: "chats",
     //   }
     // );
 
-    /* Create the chain */
-    this.crc = ConversationalRetrievalQAChain.fromLLM(
-      this.model,
-      this.vectorStore.asRetriever()
-    );
+    // /* Create the chain */
+    // this.crc = ConversationalRetrievalQAChain.fromLLM(
+    //   this.model,
+    //   this.vectorStore.asRetriever()
+    // );
+    // this.crc.memory = new BufferMemory({ returnMessages: true, memoryKey: "history" });
+
+    const tools = [
+      // new SerpAPI(process.env["SERPAPI_API_KEY"], {
+      //   location: "Austin,Texas,United States",
+      //   hl: "en",
+      //   gl: "us",
+      // }),
+      new ChainTool({
+        name: "previous-conversations-chain",
+        description:
+          "Previous conversations chain",
+        chain: VectorDBQAChain.fromLLM(this.model, this.chatStore), 
+      }),
+      new ChainTool({
+        name: "arnold-chain",
+        description:
+          "Arnold Schwarznegger chain",
+        chain: VectorDBQAChain.fromLLM(this.model, this.arnoldStore), 
+      }),
+      new ChainTool({
+        name: "coaching-chain",
+        description:
+          "Coaching chain",
+        chain: VectorDBQAChain.fromLLM(this.model, this.coachingStore), 
+      })
+    ];
+    const llmChain = new LLMChain({
+      prompt: chatPrompt,
+      llm: this.chat,
+    });
+    const agent = new ZeroShotAgent({
+      llmChain,
+      allowedTools: tools.map((tool) => tool.name),
+    });
+    this.executor = AgentExecutor.fromAgentAndTools({ agent, tools });
 
     this.isInitialized = true;
   }
@@ -75,12 +134,23 @@ export class LlmService implements OnModuleInit {
     return await this.model.call(prompt)
   }
 
+  async getInitialMessage() {
+    if (!this.isInitialized) {
+      throw new InternalServerErrorException();
+    }
+    return "Something needs to go here! Get and synthesise something about the last session.";
+  }  
+
   async chain(input: string) {
     if (!this.isInitialized) {
       throw new InternalServerErrorException();
     }
     // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
+    // return { response: await this.executor?.run(`Human: ${input} \n Arnold Schwarzenegger: `)}
     return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
-    // return await this.crc?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
-  }  
+  }
+
+  async storeSession(session: Session) {
+    this.chatStore.addDocuments(createDocumentsFromSession(session));
+  }
 }
