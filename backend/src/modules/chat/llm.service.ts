@@ -1,19 +1,14 @@
 import { Injectable, Inject, OnModuleInit, InternalServerErrorException } from '@nestjs/common';
 import { OpenAI } from "langchain/llms/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
 import { ConversationChain, LLMChain, ConversationalRetrievalQAChain, VectorDBQAChain } from 'langchain/chains';
-import { BufferMemory } from 'langchain/memory';
 import { ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate } from 'langchain/prompts';
 import { Agent, AgentExecutor, ChatAgent, initializeAgentExecutor, ZeroShotAgent } from 'langchain/agents';
-import { ChatGPTPluginRetriever } from 'langchain/retrievers';
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { VectorStore } from 'langchain/vectorstores/base';
 import { ChainTool, SerpAPI } from "langchain/tools";
-import { Session } from '../models/Session';
-import { buildExistingVectorStore, buildVectorStoreFromTexts } from './chat.module';
 import { Document } from "langchain/document";
+import { Session, Sender } from '../models/Session';
 
 async function createDocumentsFromSession(session: Session): Promise<Document<Record<string, any>>[]> {
   const documents: Document<Record<string, any>>[] = [];
@@ -66,11 +61,11 @@ export class LlmService implements OnModuleInit {
         Arnold may also offer advice based on his own experiences or observations but always keeping the focus on helping you reach your goals. Please note that the tone of the conversation should reflect Arnold's personality - supportive, direct, and focused on success.`
       ),
       new MessagesPlaceholder("history"),
-      HumanMessagePromptTemplate.fromTemplate("{input}"),
+      HumanMessagePromptTemplate.fromTemplate("User: {input} \n Arnold Schwarznegger: "),
     ]);
 
     this.conversationChain = new ConversationChain({
-      memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
+      // memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
       prompt: chatPrompt,
       llm: this.chat,
     });
@@ -144,15 +139,32 @@ export class LlmService implements OnModuleInit {
     return "Something needs to go here! Get and synthesise something about the last session.";
   }  
 
-  async chain(input: string) {
+  async chain(session: Session) {
     if (!this.isInitialized) {
       throw new InternalServerErrorException();
     }
     // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
     // return { response: await this.executor?.run(`Human: ${input} \n Arnold Schwarzenegger: `)}
     // return { response: "Hello world!" }
-    return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
+    let conversation = ``;
+    session.Messages.map(message => 
+      conversation.concat(
+        `${message.sender === Sender.User 
+          ? "User" 
+          : "Arnold Schwarzenegger"}: ${message.text}\n`))
+    conversation.concat("Arnold Schwarzenegger:")
+    return await this.conversationChain?.call({input: conversation });
   }
+
+  // async chain(input: string) {
+  //   if (!this.isInitialized) {
+  //     throw new InternalServerErrorException();
+  //   }
+  //   // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
+  //   // return { response: await this.executor?.run(`Human: ${input} \n Arnold Schwarzenegger: `)}
+  //   // return { response: "Hello world!" }
+  //   return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
+  // }
 
   async storeSession(session: Session) {
     this.chatStore.addDocuments(await createDocumentsFromSession(session));

@@ -20,13 +20,13 @@ export class ChatController {
   }
 
   @Post()
-  async prompt(@Body() prompt: PromptDto) {
+  async prompt(@Body() session: SessionDto) {
     // Cache the input (I guess). After a conversation is idle for a longer period of time, 
     // create embeddings and store them. 
 
     // // console.log(`Got a request with text: ${prompt.text}`)
     // await delay(1000);
-    const message = await this.llmService.chain(prompt.text);
+    const message = await this.llmService.chain(SessionDto.toObject(session));
     // console.log(message)
     return { message: message.response };
   }
