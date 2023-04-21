@@ -8,7 +8,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { VectorStore } from 'langchain/vectorstores/base';
 import { ChainTool, SerpAPI } from "langchain/tools";
 import { Document } from "langchain/document";
-import { Session, Sender } from '../models/Session';
+import { Session, Sender } from '../models/Session.js';
 
 async function createDocumentsFromSession(session: Session): Promise<Document<Record<string, any>>[]> {
   const documents: Document<Record<string, any>>[] = [];
@@ -58,9 +58,9 @@ export class LlmService implements OnModuleInit {
 
         Please engage in a dialogue with Arnold where he asks you relevant questions about your goals, interests, strengths, and weaknesses. You should respond honestly and openly, providing details that will help him guide you towards achieving your desired outcomes.
         
-        Arnold may also offer advice based on his own experiences or observations but always keeping the focus on helping you reach your goals. Please note that the tone of the conversation should reflect Arnold's personality - supportive, direct, and focused on success.`
+        Arnold may also offer advice based on his own experiences or observations but always keeping the focus on helping you reach your goals. Please note that the tone of the conversation should reflect Arnold's personality - supportive, direct, and focused on success, while providing plenty of Arnold Schwarzenegger quotes in a fun and engaging fashion.`
       ),
-      new MessagesPlaceholder("history"),
+      // new MessagesPlaceholder("history"),
       HumanMessagePromptTemplate.fromTemplate("User: {input} \n Arnold Schwarznegger: "),
     ]);
 
@@ -139,32 +139,23 @@ export class LlmService implements OnModuleInit {
     return "Something needs to go here! Get and synthesise something about the last session.";
   }  
 
-  async chain(session: Session) {
+  async chain(session: Session): Promise<string> {
     if (!this.isInitialized) {
       throw new InternalServerErrorException();
     }
-    // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
-    // return { response: await this.executor?.run(`Human: ${input} \n Arnold Schwarzenegger: `)}
-    // return { response: "Hello world!" }
-    let conversation = ``;
-    session.Messages.map(message => 
-      conversation.concat(
-        `${message.sender === Sender.User 
-          ? "User" 
-          : "Arnold Schwarzenegger"}: ${message.text}\n`))
-    conversation.concat("Arnold Schwarzenegger:")
-    return await this.conversationChain?.call({input: conversation });
+    let conversation = "";
+    conversation = session.Messages.map(message => 
+      {
+        conversation = conversation.concat(
+          `${message.sender === Sender.User 
+            ? "User" 
+            : "Arnold Schwarzenegger"}: ${message.text}`)
+          return conversation;
+      })
+      .join("\n")
+      .concat("\n Arnold Schwarzenegger: ");
+    return (await this.conversationChain?.call({input: conversation })).response as string;
   }
-
-  // async chain(input: string) {
-  //   if (!this.isInitialized) {
-  //     throw new InternalServerErrorException();
-  //   }
-  //   // Make a prompt that aligns GPT with something Arnold related - like lifting weights, body building, acting or killing robots
-  //   // return { response: await this.executor?.run(`Human: ${input} \n Arnold Schwarzenegger: `)}
-  //   // return { response: "Hello world!" }
-  //   return await this.conversationChain?.call({input: `Human: ${input} \n Arnold Schwarzenegger: `});
-  // }
 
   async storeSession(session: Session) {
     this.chatStore.addDocuments(await createDocumentsFromSession(session));

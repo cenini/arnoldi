@@ -26,9 +26,8 @@ export class ChatController {
 
     // // console.log(`Got a request with text: ${prompt.text}`)
     // await delay(1000);
-    const message = await this.llmService.chain(SessionDto.toObject(session));
-    // console.log(message)
-    return { message: message.response };
+    let response = await this.llmService.chain(SessionDto.toObject(session));
+    return { message: response.replace(new RegExp("^(Arnold(?:\\sSchwarzenegger)?\\:)", "i"), "") };
   }
 
   // @Post("/InitialMessage")
