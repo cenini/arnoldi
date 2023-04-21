@@ -155,9 +155,6 @@ export class LlmService implements OnModuleInit {
   }
 
   async storeSession(session: Session) {
-    // Check if the session has already been saved or not before saving... (probably need to install chroma for that)
-    // this.chatStore.similaritySearch("", )
     this.chatStore.addDocuments(await createDocumentsFromSession(session));
-    // const result = await this.chatStore.asRetriever().getRelevantDocuments("Challenges at work");
   }
 }

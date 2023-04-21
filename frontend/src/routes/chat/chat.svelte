@@ -52,21 +52,9 @@
   }
 
 	async function sendMessage(input: HTMLInputElement): Promise<string> {
-    // console.log(env.PUBLIC_BACKEND_URL)
-    // await new Promise(r => setTimeout(r, 2000)); // Only sleep when needed!
-    // Make the API call
-    const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
-        method: 'POST',
-        body: JSON.stringify({ text: input.value, sessionId: sessionId }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+    const response = await sendSession();
     input.value = '';
-
-    // console.log(response)
-
-    return (await response.json()).message;
+    return response;
 	}
 
   function addMessageToList(text: string, sender: Sender) {
@@ -75,11 +63,26 @@
 
   async function beforeUnload(event: BeforeUnloadEvent) {
     event.preventDefault();
-    await sendSession();
+    await endSession();
     return event.returnValue = '';
   }
 
-  async function sendSession(): Promise<void>{
+  async function sendSession(): Promise<string>{
+    const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
+      method: 'POST',
+      body: JSON.stringify({
+        messages: messages,
+        id: sessionId,
+        userId: "testUserId" // Actual user id here later, could also be taken from a cookie
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }); 
+    return (await response.json()).message;
+  }
+
+  async function endSession(): Promise<void>{
     await fetch(`${env.PUBLIC_BACKEND_URL}/chat/endsession`, { 
       method: 'POST',
       body: JSON.stringify({
