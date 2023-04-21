@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick } from "svelte";
   import { env } from '$env/dynamic/public';
+	import Megamode from "./megamode.svelte";
 
   interface Session {
     Messages: Message[];
@@ -101,7 +102,18 @@
 
 <div class="flex h-screen bg-neutral-focus  ">
   <div class="w-full max-w-2xl m-auto bg-base-200 rounded-lg shadow-lg p-6 flex-col">
-    <div class="font-bold text-xl mb-4">arnoldi</div>
+    <div class="flex items-stretch w-full space-x-2">
+      <div class="font-bold text-xl mb-4">
+        <div class="grid grid-cols-2">
+          <div class="justify-self-start pr-4">
+            arnoldi
+          </div>
+          <div class="justify-self-end" style="align-self: end;">
+            <Megamode />
+          </div>
+        </div>
+      </div>                        
+    </div>
         <div class="h-96 border p-4 rounded-lg overflow-y-scroll" bind:this={chat}>
           <div>
             {#each messages as message, index}

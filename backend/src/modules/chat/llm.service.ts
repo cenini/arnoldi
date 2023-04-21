@@ -61,7 +61,7 @@ export class LlmService implements OnModuleInit {
         Arnold may also offer advice based on his own experiences or observations but always keeping the focus on helping you reach your goals. Please note that the tone of the conversation should reflect Arnold's personality - supportive, direct, and focused on success, while providing plenty of Arnold Schwarzenegger quotes in a fun and engaging fashion.`
       ),
       // new MessagesPlaceholder("history"),
-      HumanMessagePromptTemplate.fromTemplate("User: {input} \n Arnold Schwarznegger: "),
+      HumanMessagePromptTemplate.fromTemplate("Coachee: {input} \n Arnold Schwarznegger: "),
     ]);
 
     this.conversationChain = new ConversationChain({
