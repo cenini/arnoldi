@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick } from "svelte";
   import { env } from '$env/dynamic/public';
+  import { page } from '$app/stores';
 	import Megamode from "./megamode.svelte";
 
   interface Session {
@@ -84,12 +85,13 @@
   }
 
   async function endSession(): Promise<void>{
+    const email = $page.data.session.user.email;
     await fetch(`${env.PUBLIC_BACKEND_URL}/chat/endsession`, { 
       method: 'POST',
       body: JSON.stringify({
         messages: messages,
         id: sessionId,
-        userId: "testUserId" // Actual user id here later, could also be taken from a cookie
+        userId: (email === undefined) ? "temp" : email // Temp should be replaced by cookie as fallback later
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -104,13 +106,15 @@
   <div class="w-full max-w-2xl m-auto bg-base-200 rounded-lg shadow-lg p-6 flex-col">
     <div class="flex items-stretch w-full space-x-2">
       <div class="font-bold text-xl mb-4">
-        <div class="grid grid-cols-2">
+        <div class="grid grid-cols-3">
           <div class="justify-self-start pr-4">
             arnoldi
           </div>
           <div class="justify-self-end" style="align-self: end;">
             <Megamode />
           </div>
+          <!-- split here -->
+          <!-- <div class="justify-self-end" style="align-self: end;">hi {$page.data.session.user.name === undefined ? "you" : $page.data.session.user.name}</div> -->
         </div>
       </div>                        
     </div>

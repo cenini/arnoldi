@@ -4,6 +4,7 @@
   import Auth from "./auth/google.svelte";
 	import Github from "./auth/github.svelte";
 	import Google from "./auth/google.svelte";
+	import Bottomnav from "./bottomnav/bottomnav.svelte";
 
 </script>
 
@@ -19,5 +20,6 @@
 <div class="chat-container">
   <Chat />
   <Github />
+  <Bottomnav />
   <!-- <Google /> -->
 </div>

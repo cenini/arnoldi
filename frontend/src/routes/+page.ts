@@ -6,7 +6,8 @@ export function load({ params }) {
           user: {
             image: {},
             email: "bla",
-            name: "blo"
+            name: "blo",
+            id: "bab"
           }
         }
       }
