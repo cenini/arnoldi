@@ -105,3 +105,6 @@ dist
 
 # Don't check in certs
 .certs
+
+# Don't check in secrets for google auth
+google_client_secret.json

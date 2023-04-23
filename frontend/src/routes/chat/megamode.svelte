@@ -15,5 +15,4 @@
 
 <div class="tooltip" data-tip="Mega-mode">
   <input type="checkbox" data-toggle-theme="valentine,coffee" class="toggle toggle-secondary" data-act-class="ACTIVECLASS" disabled='{isDisabled()}' />
-  <!-- <button data-toggle-theme="dark,light" data-act-class="ACTIVECLASS"></button> -->
 </div>
