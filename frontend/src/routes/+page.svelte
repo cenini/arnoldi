@@ -1,25 +1,17 @@
-<script>
+<script lang="ts">
+  import Chat from "./chat/chat.svelte";
+  import Bottomnav from "./bottomnav/bottomnav.svelte";
+  import type { SvelteComponent } from "svelte";
+  import { selectedView, views } from "./store";
+  import type { SelectedView, AnySvelteComponent } from "./store";
 
-	import Chat from "./chat/chat.svelte";
-  import Auth from "./auth/google.svelte";
-	import Github from "./auth/github.svelte";
-	import Google from "./auth/google.svelte";
-	import Bottomnav from "./bottomnav/bottomnav.svelte";
-
+  let currentView: AnySvelteComponent = Chat;
+  selectedView.subscribe((value: SelectedView) => {
+    currentView = views[value] as AnySvelteComponent;
+  });
 </script>
 
-<style lang="postcss">
-  /* :global(html) {
-    background-color: theme(colors.gray.100);
-  } */
-  .chat-container {
-    height: 100vh;
-  }
-</style>
-
-<div class="chat-container">
-  <Chat />
-  <Github />
+<div>
+  <svelte:component this={currentView}></svelte:component>
   <Bottomnav />
-  <!-- <Google /> -->
 </div>
