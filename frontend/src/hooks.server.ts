@@ -5,7 +5,7 @@
 // import type { Handle } from '@sveltejs/kit';
 import { SvelteKitAuth } from "@auth/sveltekit"
 import GitHub from "@auth/core/providers/github"
-import { GITHUB_ID, GITHUB_SECRET } from "$env/static/private"
+import { GITHUB_ID, GITHUB_SECRET } from "$env/dynamic/private"
 
 // Import client credentials from json file
 // import client_secret from '../google_client_secret.json';
