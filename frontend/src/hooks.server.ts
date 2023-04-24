@@ -22,18 +22,18 @@ export const handle = SvelteKitAuth({
   trustHost: true,
   providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
   callbacks: {
-    async signIn(user, account, profile) {
-      return true;
+    async redirect(params: { url: string }) {
+      const { url } = params
+
+      // url is just a path, e.g.: /videos/pets
+      if (!url.startsWith('http')) return url
+
+      // If we have a callback use only its relative path
+      const callbackUrl = new URL(url).searchParams.get('callbackUrl')
+      if (!callbackUrl) return url
+
+      return new URL(callbackUrl as string).pathname
     },
-    async redirect(url, baseUrl) {
-      return baseUrl;
-    },
-    async session(session, user) {
-      return session;
-    },
-    async jwt(token, user, account, profile, isNewUser) {
-      return token;
-    },
-  },
+
 });
 
