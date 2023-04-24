@@ -6,7 +6,7 @@ services:
     environment:
       - PORT=3000
       - PUBLIC_BACKEND_URL=${PUBLIC_BACKEND_URL}
-      - GITHUB_ID=${GITHUB_ID}
+      - VITE_GITHUB_ID=${VITE_GITHUB_ID}
       - GITHUB_SECRET=${GITHUB_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - AUTH_SECRET=${AUTH_SECRET}
