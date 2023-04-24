@@ -21,5 +21,19 @@ import { GITHUB_ID, GITHUB_SECRET } from "$env/static/private"
 export const handle = SvelteKitAuth({
   trustHost: true,
   providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
+  callbacks: {
+    async signIn(user, account, profile) {
+      return true;
+    },
+    async redirect(url, baseUrl) {
+      return baseUrl;
+    },
+    async session(session, user) {
+      return session;
+    },
+    async jwt(token, user, account, profile, isNewUser) {
+      return token;
+    },
+  },
 });
 
