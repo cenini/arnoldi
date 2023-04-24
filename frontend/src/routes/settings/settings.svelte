@@ -1,6 +1,9 @@
 <script>
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
+	// import { VITE_GITHUB_ID } from "$env/static/public"
+	const clientId = import.meta.env.VITE_GITHUB_ID;
+	console.log(clientId)
 </script>
 
 <style>
@@ -53,7 +56,7 @@
 			<button on:click={() => signOut()} class="button">Sign out</button>
 			<!-- <button on:click={() => console.log($page.data.session)}>Log session</button> -->
 	{:else}
-			<button on:click={() => signIn('github')} class="github-login-button">
+			<button on:click={() => signIn('github', {clientId: clientId})} class="github-login-button">
 					<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Icon" />
 					Sign In with GitHub
 			</button>
