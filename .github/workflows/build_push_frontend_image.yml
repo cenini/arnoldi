@@ -42,7 +42,7 @@ jobs:
         context: "${{ github.server_url }}/${{ github.repository }}.git#${{ github.ref }}:${{ env.CONTEXT_SUBDIR }}"
         push: true
         tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}, ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_latest
-        build_args: |
+        build-args: |
           ARNOLDI_GITHUB_ID=${{ env.ARNOLDI_GITHUB_ID }}
           ARNOLDI_GITHUB_SECRET=${{ secrets.ARNOLDI_GITHUB_SECRET }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
