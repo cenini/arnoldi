@@ -1,11 +1,6 @@
 # Use the official Node.js image as the base image
 FROM node:16
 
-ARG ARNOLDI_GITHUB_ID, ARNOLDI_GITHUB_SECRET, AUTH_SECRET
-ENV ARNOLDI_GITHUB_ID=$ARNOLDI_GITHUB_ID
-ENV ARNOLDI_GITHUB_SECRET=$ARNOLDI_GITHUB_SECRET
-ENV AUTH_SECRET=$AUTH_SECRET
-
 # Set the working directory in the container
 WORKDIR /app
 
@@ -17,7 +12,14 @@ RUN npm ci
 
 # Copy the source code of the Svelte app to the working directory
 COPY . .
-RUN echo $ARNOLDI_GITHUB_SECRET
+
+# Set environment variables
+ARG GITHUB_ID, GITHUB_SECRET, AUTH_SECRET, NEXTAUTH_URL
+ENV GITHUB_ID=${GITHUB_ID}
+ENV GITHUB_SECRET=${GITHUB_SECRET}
+ENV AUTH_SECRET=${AUTH_SECRET}
+ENV NEXTAUTH_URL=${NEXTAUTH_URL}
+
 # Build the Svelte app using the Node adapter
 RUN npm run build
 

@@ -43,8 +43,9 @@ jobs:
         push: true
         tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}, ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_latest
         build-args: |
-          ARNOLDI_GITHUB_ID=${{ env.ARNOLDI_GITHUB_ID }}
-          ARNOLDI_GITHUB_SECRET=${{ secrets.ARNOLDI_GITHUB_SECRET }}
+          GITHUB_ID=${{ env.ARNOLDI_GITHUB_ID }}
+          GITHUB_SECRET=${{ secrets.ARNOLDI_GITHUB_SECRET }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          NEXTAUTH_URL=${{ env.NEXTAUTH_URL }}
         secrets: |
           GIT_AUTH_TOKEN=${{ secrets.CLASSIC_AUTH_TOKEN }}
