@@ -5,7 +5,7 @@
 // import type { Handle } from '@sveltejs/kit';
 import { SvelteKitAuth } from "@auth/sveltekit"
 import GitHub from "@auth/core/providers/github"
-import { GITHUB_ID, GITHUB_SECRET, NEXTAUTH_SECRET } from "$env/static/private"
+import { GITHUB_ID, GITHUB_SECRET, AUTH_SECRET } from "$env/static/private"
 
 // Import client credentials from json file
 // import client_secret from '../google_client_secret.json';
@@ -19,9 +19,9 @@ import { GITHUB_ID, GITHUB_SECRET, NEXTAUTH_SECRET } from "$env/static/private"
 // }
 
 export const handle = SvelteKitAuth({
-  trustHost: true,
+  // trustHost: true,
   providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
-  secret: NEXTAUTH_SECRET,
+  secret: AUTH_SECRET,
   callbacks: {
     async redirect(params: { url: string }) {
       const { url } = params
