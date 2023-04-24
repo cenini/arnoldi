@@ -34,6 +34,6 @@ export const handle = SvelteKitAuth({
 
       return new URL(callbackUrl as string).pathname
     },
-
+  }
 });
 
