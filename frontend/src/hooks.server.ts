@@ -5,7 +5,7 @@
 // import type { Handle } from '@sveltejs/kit';
 import { SvelteKitAuth } from "@auth/sveltekit"
 import GitHub from "@auth/core/providers/github"
-import { GITHUB_ID, GITHUB_SECRET } from "$env/dynamic/private"
+import { ARNOLDI_GITHUB_ID, ARNOLDI_GITHUB_SECRET } from "$env/static/private"
 
 // Import client credentials from json file
 // import client_secret from '../google_client_secret.json';
@@ -19,5 +19,5 @@ import { GITHUB_ID, GITHUB_SECRET } from "$env/dynamic/private"
 // }
 
 export const handle = SvelteKitAuth({
-  providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
+  providers: [GitHub({ clientId: ARNOLDI_GITHUB_ID, clientSecret: ARNOLDI_GITHUB_SECRET })],
 });
