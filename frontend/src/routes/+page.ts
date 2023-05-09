@@ -2,6 +2,7 @@
 export function load({ params }) {
   return {
       data: {
+        megaModeOn: false,
         session: {
           user: {
             image: {},

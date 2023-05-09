@@ -123,6 +123,7 @@
         </div>
         <div class="justify-self-end" style="align-self: end;">
           <Megamode />
+          <!-- <Megamode /> -->
         </div>
       </div>
     </div>                        
