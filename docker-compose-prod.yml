@@ -15,8 +15,6 @@ services:
       - 8080:3000
     networks:
       - arnoldi
-    volumes:
-      - ./.env:/app/build/.env
   backend:
     image: ninipriv/aime:backend_latest
     environment:
