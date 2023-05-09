@@ -43,10 +43,10 @@ jobs:
         push: true
         tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_${{ env.IMAGE_VERSION }}_${{ github.run_id }}, ${{ env.DOCKER_REPOSITORY }}:${{ env.IMAGE_NAME }}_latest
         build-args: |
-          VITE_GITHUB_ID=${{ env.VITE_GITHUB_ID }}
+          VITE_GITHUB_ID=${{ secrets.VITE_GITHUB_ID }}
           GITHUB_SECRET=${{ secrets.ARNOLDI_GITHUB_SECRET }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-          NEXTAUTH_URL=${{ env.NEXTAUTH_URL }}
-          AUTH_TRUST_HOST=${{ env.AUTH_TRUST_HOST }}
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+          AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}
         secrets: |
           GIT_AUTH_TOKEN=${{ secrets.CLASSIC_AUTH_TOKEN }}
