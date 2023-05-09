@@ -78,13 +78,18 @@
     return event.returnValue = '';
   }
 
+  function getUserId(): string {
+    const email = $page.data.session?.user?.email;
+    return (email === undefined || email === null) ? "temp" : email;  // Temp should be replaced by cookie as fallback later
+  }
+
   async function sendSession(): Promise<string>{
     const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
       method: 'POST',
       body: JSON.stringify({
         messages: messages,
         id: sessionId,
-        userId: "testUserId" // Actual user id here later, could also be taken from a cookie
+        userId: getUserId() 
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -94,13 +99,12 @@
   }
 
   async function endSession(): Promise<void>{
-    const email = $page.data.session.user.email;
     await fetch(`${env.PUBLIC_BACKEND_URL}/chat/endsession`, { 
       method: 'POST',
       body: JSON.stringify({
         messages: messages,
         id: sessionId,
-        userId: (email === undefined) ? "temp" : email // Temp should be replaced by cookie as fallback later
+        userId: getUserId()
       }),
       headers: {
         'Content-Type': 'application/json'

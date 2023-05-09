@@ -1,9 +1,7 @@
 <script>
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
-	// import { VITE_GITHUB_ID } from "$env/static/public"
 	const clientId = import.meta.env.VITE_GITHUB_ID;
-	console.log(clientId)
 </script>
 
 <style>
