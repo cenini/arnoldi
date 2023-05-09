@@ -47,6 +47,6 @@ jobs:
           GITHUB_SECRET=${{ secrets.ARNOLDI_GITHUB_SECRET }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
           NEXTAUTH_URL=${{ env.NEXTAUTH_URL }}
-          AUTH_TRUST_HOST=${AUTH_TRUST_HOST}
+          AUTH_TRUST_HOST=${{ env.AUTH_TRUST_HOST }}
         secrets: |
           GIT_AUTH_TOKEN=${{ secrets.CLASSIC_AUTH_TOKEN }}

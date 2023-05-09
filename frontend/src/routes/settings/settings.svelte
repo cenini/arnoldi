@@ -46,15 +46,14 @@
 
 <div class="github-login-container">
 	{#if Object.keys($page.data.session || {}).length}
-			{#if $page.data.session.user.image}
+			{#if $page.data.session?.user?.image}
 					<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
 			{/if}
 			<span class="signedInText">
 					<small>Signed in as</small><br />
-					<strong>{$page.data.session.user.email || $page.data.session.user.name}</strong>
+					<strong>{$page.data.session?.user?.email || $page.data.session?.user?.name}</strong>
 			</span>
 			<button on:click={() => signOut()} class="button">Sign out</button>
-			<!-- <button on:click={() => console.log($page.data.session)}>Log session</button> -->
 	{:else}
 			<button on:click={() => signIn('github', {clientId: clientId})} class="github-login-button">
 					<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Icon" />

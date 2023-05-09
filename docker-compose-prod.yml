@@ -16,7 +16,7 @@ services:
     networks:
       - arnoldi
     volumes:
-      - ./frontend/.env:/app/build/.env
+      - ./.env:/app/build/.env
   backend:
     image: ninipriv/aime:backend_latest
     environment:
