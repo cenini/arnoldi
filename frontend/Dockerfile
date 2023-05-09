@@ -1,5 +1,4 @@
 # Use the official Node.js image as the base image
-#FROM node:16
 FROM node:20
 
 # Set the working directory in the container
@@ -26,12 +25,6 @@ ENV GITHUB_SECRET=${GITHUB_SECRET}
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}
 ENV AUTH_SECRET=${AUTH_SECRET}
 ENV AUTH_TRUST_HOST=${AUTH_TRUST_HOST}
-
-RUN echo "VITE_GITHUB_ID: $VITE_GITHUB_ID"
-RUN echo "GITHUB_SECRET: $GITHUB_SECRET"
-RUN echo "AUTH_SECRET: $AUTH_SECRET"
-RUN echo "NEXTAUTH_URL: $NEXTAUTH_URL"
-RUN echo "AUTH_TRUST_HOST: $AUTH_TRUST_HOST"
 
 # Build the Svelte app using the Node adapter
 RUN npm run build
