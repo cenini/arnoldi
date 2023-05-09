@@ -3,6 +3,7 @@
   import { env } from '$env/dynamic/public';
   import { page } from '$app/stores';
 	import Megamode from "./megamode.svelte";
+  import { v4 as uuidv4 } from 'uuid';
 
   interface Session {
     Messages: Message[];
@@ -19,9 +20,17 @@
     User,
     Ai
   }
-  
+
+  function generateUUID() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    } else {
+      return uuidv4();
+    }
+  }
+
   export let messages: Message[] = [];
-  const sessionId: string = crypto.randomUUID();
+  const sessionId: string = generateUUID();
   let chat: HTMLDivElement; 
   let input: HTMLInputElement;
   let newInputValue = '';

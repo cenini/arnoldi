@@ -46,6 +46,7 @@
 		"daisyui": "^2.51.5",
 		"dotenv": "^16.0.3",
 		"svelte-google-auth": "^0.7.2",
-		"theme-change": "^2.5.0"
+		"theme-change": "^2.5.0",
+		"uuid": "^9.0.0"
 	}
 }
