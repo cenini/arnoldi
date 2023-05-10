@@ -80,9 +80,7 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
             await client.connect();
             const db = client.db("arnoldi");
             const collection: Collection<Session> = db.collection(sessionsCollection);
-            if (!collection.indexExists("Id")) {
-              collection.createIndex({Id: 1}, { collation: { locale: "us"}})
-            }
+            await collection.createIndex({Id: 1}, { collation: { locale: "en"}})
             return collection;
           }
         },
