@@ -8,54 +8,56 @@ import { Chroma } from 'langchain/vectorstores/chroma';
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { ChatController } from './chat.controller.js';
 import { LlmService } from './llm.service.js';
+import { MongoClient } from 'mongodb';
 
 const chatCollection = "arnoldi-chats";
 const coachingCollection = "arnoldi-coaching";
 const arnoldCollection = "arnoldi-arnold";
+const sessionsCollection = "sessions";
 // 1536
-export async function buildExistingVectorStore(indexName: string): Promise<VectorStore> {
-  // Return Chroma by default
-  if (process.env["VECTOR_STORE"] === undefined) {
-    throw new Error("VectorStore not defined");
-  }
-  if (process.env["VECTOR_STORE"].toLowerCase() === "pinecone") {
-    const client = new PineconeClient();
-    await client.init({
-      apiKey: process.env.PINECONE_API_KEY,
-      environment: process.env.PINECONE_ENVIRONMENT,
-    });
-    const pineconeIndex = client.Index(indexName);
-    return PineconeStore.fromExistingIndex(
-      new OpenAIEmbeddings(),
-      { pineconeIndex }
-    );
-  }
+export async function buildExistingVectorStore(indexName: string): Promise<Chroma> {
+  // // Return Chroma by default
+  // if (process.env["VECTOR_STORE"] === undefined) {
+  //   throw new Error("VectorStore not defined");
+  // }
+  // if (process.env["VECTOR_STORE"].toLowerCase() === "pinecone") {
+  //   const client = new PineconeClient();
+  //   await client.init({
+  //     apiKey: process.env.PINECONE_API_KEY,
+  //     environment: process.env.PINECONE_ENVIRONMENT,
+  //   });
+  //   const pineconeIndex = client.Index(indexName);
+  //   return PineconeStore.fromExistingIndex(
+  //     new OpenAIEmbeddings(),
+  //     { pineconeIndex }
+  //   );
+  // }
   // Return Chroma by default
   const chroma = new Chroma(new OpenAIEmbeddings(), { collectionName: indexName, numDimensions: 1536 });
   chroma.ensureCollection();
   return chroma;
 }
 
-export async function buildVectorStoreFromTexts(indexName: string, texts: string[], metadatas: object[]): Promise<VectorStore> {
-  // Return Chroma by default
-  if (process.env["VECTOR_STORE"] === undefined) {
-    throw new Error("VectorStore not defined");
-  }
-  if (process.env["VECTOR_STORE"].toLowerCase() === "pinecone") {
-    const client = new PineconeClient();
-    await client.init({
-      apiKey: process.env.PINECONE_API_KEY,
-      environment: process.env.PINECONE_ENVIRONMENT,
-    });
-    const pineconeIndex = client.Index(indexName);
-    return PineconeStore.fromTexts(
-      texts,
-      metadatas,
-      new OpenAIEmbeddings(),
-      { pineconeIndex }
-    );
-  }
-  // text sample from Godel, Escher, Bach
+export async function buildVectorStoreFromTexts(indexName: string, texts: string[], metadatas: object[]): Promise<Chroma> {
+  // // Return Chroma by default
+  // if (process.env["VECTOR_STORE"] === undefined) {
+  //   throw new Error("VectorStore not defined");
+  // }
+  // if (process.env["VECTOR_STORE"].toLowerCase() === "pinecone") {
+  //   const client = new PineconeClient();
+  //   await client.init({
+  //     apiKey: process.env.PINECONE_API_KEY,
+  //     environment: process.env.PINECONE_ENVIRONMENT,
+  //   });
+  //   const pineconeIndex = client.Index(indexName);
+  //   return PineconeStore.fromTexts(
+  //     texts,
+  //     metadatas,
+  //     new OpenAIEmbeddings(),
+  //     { pineconeIndex }
+  //   );
+  // }
+  // // text sample from Godel, Escher, Bach
   return await Chroma.fromTexts(
     texts,
     metadatas,
@@ -69,6 +71,16 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
 @Module({
     controllers: [ChatController],
     providers: [
+        {
+          provide: "SessionCollection",
+          useFactory: async () => {
+            console.log(process.env["MONGO_URL"])
+            const client = new MongoClient(process.env["MONGO_URL"]);
+            await client.connect();
+            const db = client.db("arnoldi")
+            return db.collection(sessionsCollection);
+          }
+        },
         {
           provide: "ChatStore",
           useFactory: async () => 

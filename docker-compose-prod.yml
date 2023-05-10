@@ -81,6 +81,14 @@ services:
       - ./config/chroma_users.xml:/etc/clickhouse-server/users.d/chroma.xml
     networks:
       - arnoldi
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    networks:
+      - arnoldi      
 
 volumes:
   clickhouse_data:
