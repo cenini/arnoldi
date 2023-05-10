@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export interface Session {
   Messages: Message[];
   Id: string;

@@ -2,6 +2,8 @@ import { Inject, Controller, Body, Get, Post} from '@nestjs/common';
 import { LlmService } from './llm.service.js';
 import { PromptDto } from './prompt.dto.js';
 import { MessageDto, SessionDto } from './session.dto.js';
+import { Collection, ObjectId } from 'mongodb';
+import { Session } from '../models/Session.js';
 
 function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
@@ -11,6 +13,7 @@ function delay(ms: number) {
 export class ChatController {
   constructor(
     @Inject(LlmService) private readonly llmService: LlmService,
+    @Inject("SessionCollection") private readonly sessionCollection: Collection<Session>
     ) {}
 
   @Get()
@@ -23,17 +26,11 @@ export class ChatController {
 
   @Post()
   // async prompt(@Body() message: MessageDto) {
-  async prompt(@Body() session: SessionDto) {    
-    // Cache the input (I guess). After a conversation is idle for a longer period of time, 
-    // create embeddings and store them. 
-
-    // // console.log(`Got a request with text: ${prompt.text}`)
-    // await delay(1000);
-
-    // get the session
-    // then pass the session to the llmService
-    console.log("hello world")
-    let response = await this.llmService.chain(SessionDto.toObject(session));
+  async prompt(@Body() sessionDto: SessionDto) {
+    const session = SessionDto.toObject(sessionDto);
+    const filter = { Id: session.Id };
+    await this.sessionCollection.updateMany(filter, { $set:session }, { upsert: true });
+    let response = await this.llmService.chain(session);
     return { message: response.replace(new RegExp("^(Arnold(?:\\sSchwarzenegger)?\\:)", "i"), "") };
   }
   // async prompt(@Body() session: SessionDto) {

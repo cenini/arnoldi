@@ -8,7 +8,8 @@ import { Chroma } from 'langchain/vectorstores/chroma';
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { ChatController } from './chat.controller.js';
 import { LlmService } from './llm.service.js';
-import { MongoClient } from 'mongodb';
+import { Collection, MongoClient } from 'mongodb';
+import { Session } from '../models/Session.js';
 
 const chatCollection = "arnoldi-chats";
 const coachingCollection = "arnoldi-coaching";
@@ -74,11 +75,15 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
         {
           provide: "SessionCollection",
           useFactory: async () => {
-            console.log(process.env["MONGO_URL"])
-            const client = new MongoClient(process.env["MONGO_URL"]);
+            console.log(process.env["MONGO_CONNECTION_STRING"])
+            const client = new MongoClient(process.env["MONGO_CONNECTION_STRING"]);
             await client.connect();
-            const db = client.db("arnoldi")
-            return db.collection(sessionsCollection);
+            const db = client.db("arnoldi");
+            const collection: Collection<Session> = db.collection(sessionsCollection);
+            if (!collection.indexExists("Id")) {
+              collection.createIndex({Id: 1}, { collation: { locale: "us"}})
+            }
+            return collection;
           }
         },
         {

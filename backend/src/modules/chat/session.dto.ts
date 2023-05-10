@@ -18,6 +18,8 @@ export class MessageDto  {
   @IsNotEmpty()
   public sender: SenderDto;
 
+  // add a timestamp like sentat
+
   static toObject(dto: MessageDto): Message {
     return {
       text: dto.text,
@@ -36,6 +38,8 @@ export class SessionDto {
   @IsUUID()
   @IsNotEmpty()
   public userId!: string;
+
+  // Add a timestamp like lastactive
 
   static toObject(dto: SessionDto): Session {
     return {
