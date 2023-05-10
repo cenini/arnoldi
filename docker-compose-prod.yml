@@ -91,6 +91,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
     networks:
       - arnoldi      
 
@@ -100,6 +102,8 @@ volumes:
   index_data:
     driver: local
   backups:
+    driver: local
+  mongo_data:
     driver: local
 
 networks:
