@@ -42,9 +42,9 @@ export class LlmService implements OnModuleInit {
   constructor(
     @Inject("OpenAI") private readonly model: OpenAI,
     @Inject("ChatOpenAI") private readonly chat: ChatOpenAI,
-    @Inject("ChatStore") private readonly chatStore: VectorStore,
-    @Inject("CoachingStore") private readonly coachingStore: VectorStore,
-    @Inject("ArnoldStore") private readonly arnoldStore: VectorStore,
+    // @Inject("ChatStore") private readonly chatStore: VectorStore,
+    // @Inject("CoachingStore") private readonly coachingStore: VectorStore,
+    // @Inject("ArnoldStore") private readonly arnoldStore: VectorStore,
     @Inject("SessionCollection") private readonly sessionCollection: Collection<Session>
     ) {}
 
@@ -93,40 +93,40 @@ export class LlmService implements OnModuleInit {
     // );
     // this.crc.memory = new BufferMemory({ returnMessages: true, memoryKey: "history" });
 
-    const tools = [
-      // new SerpAPI(process.env["SERPAPI_API_KEY"], {
-      //   location: "Austin,Texas,United States",
-      //   hl: "en",
-      //   gl: "us",
-      // }),
-      new ChainTool({
-        name: "previous-conversations-chain",
-        description:
-          "Previous conversations chain",
-        chain: VectorDBQAChain.fromLLM(this.model, this.chatStore), 
-      }),
-      new ChainTool({
-        name: "arnold-chain",
-        description:
-          "Arnold Schwarznegger chain",
-        chain: VectorDBQAChain.fromLLM(this.model, this.arnoldStore), 
-      }),
-      new ChainTool({
-        name: "coaching-chain",
-        description:
-          "Coaching chain",
-        chain: VectorDBQAChain.fromLLM(this.model, this.coachingStore), 
-      })
-    ];
-    const llmChain = new LLMChain({
-      prompt: chatPrompt,
-      llm: this.chat,
-    });
-    const agent = new ZeroShotAgent({
-      llmChain,
-      allowedTools: tools.map((tool) => tool.name),
-    });
-    this.executor = AgentExecutor.fromAgentAndTools({ agent, tools });
+    // const tools = [
+    //   // new SerpAPI(process.env["SERPAPI_API_KEY"], {
+    //   //   location: "Austin,Texas,United States",
+    //   //   hl: "en",
+    //   //   gl: "us",
+    //   // }),
+    //   new ChainTool({
+    //     name: "previous-conversations-chain",
+    //     description:
+    //       "Previous conversations chain",
+    //     chain: VectorDBQAChain.fromLLM(this.model, this.chatStore), 
+    //   }),
+    //   new ChainTool({
+    //     name: "arnold-chain",
+    //     description:
+    //       "Arnold Schwarznegger chain",
+    //     chain: VectorDBQAChain.fromLLM(this.model, this.arnoldStore), 
+    //   }),
+    //   new ChainTool({
+    //     name: "coaching-chain",
+    //     description:
+    //       "Coaching chain",
+    //     chain: VectorDBQAChain.fromLLM(this.model, this.coachingStore), 
+    //   })
+    // ];
+    // const llmChain = new LLMChain({
+    //   prompt: chatPrompt,
+    //   llm: this.chat,
+    // });
+    // const agent = new ZeroShotAgent({
+    //   llmChain,
+    //   allowedTools: tools.map((tool) => tool.name),
+    // });
+    // this.executor = AgentExecutor.fromAgentAndTools({ agent, tools });
 
     this.isInitialized = true;
   }
@@ -161,6 +161,6 @@ export class LlmService implements OnModuleInit {
   }
 
   async storeSession(session: Session) {
-    this.chatStore.addDocuments(await createDocumentsFromSession(session));
+    // this.chatStore.addDocuments(await createDocumentsFromSession(session));
   }
 }

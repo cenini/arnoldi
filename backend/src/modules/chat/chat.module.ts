@@ -84,28 +84,28 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
             return collection;
           }
         },
-        {
-          provide: "ChatStore",
-          useFactory: async () => 
-          { 
-            // return await buildVectorStoreFromTexts(chatCollection, ["Blabla"]);
-            return await buildExistingVectorStore(chatCollection);
-          }
-        },
-        {
-          provide: "CoachingStore",
-          useFactory: async () => 
-          { 
-            const vectorStore = await buildExistingVectorStore(coachingCollection);
-            // Add the book "Total Recall: My Unbelievably True Life Story" to the collection
-            // vectorStore.addDocuments()
-            return vectorStore;
-          }
-        },
-        {
-          provide: "ArnoldStore",
-          useFactory: async () => { return await buildExistingVectorStore(arnoldCollection) }
-        },
+        // {
+        //   provide: "ChatStore",
+        //   useFactory: async () => 
+        //   { 
+        //     // return await buildVectorStoreFromTexts(chatCollection, ["Blabla"]);
+        //     return await buildExistingVectorStore(chatCollection);
+        //   }
+        // },
+        // {
+        //   provide: "CoachingStore",
+        //   useFactory: async () => 
+        //   { 
+        //     const vectorStore = await buildExistingVectorStore(coachingCollection);
+        //     // Add the book "Total Recall: My Unbelievably True Life Story" to the collection
+        //     // vectorStore.addDocuments()
+        //     return vectorStore;
+        //   }
+        // },
+        // {
+        //   provide: "ArnoldStore",
+        //   useFactory: async () => { return await buildExistingVectorStore(arnoldCollection) }
+        // },
         {
           provide: 'OpenAI',
           useFactory: () => {
