@@ -21,7 +21,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
       - VECTOR_STORE=${VECTOR_STORE}
-      - MONGO_CONNECTION_STRING = "mongodb://root:${MONGO_PASSWORD}@mongo:27017/"
+      - MONGO_CONNECTION_STRING="mongodb://root:${MONGO_PASSWORD}@mongo:27017/"
     ports:
       - 3000:3000
     healthcheck:
