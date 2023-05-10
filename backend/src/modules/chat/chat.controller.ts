@@ -33,27 +33,12 @@ export class ChatController {
     let response = await this.llmService.chain(session);
     return { message: response.replace(new RegExp("^(Arnold(?:\\sSchwarzenegger)?\\:)", "i"), "") };
   }
-  // async prompt(@Body() session: SessionDto) {
-  //   // Cache the input (I guess). After a conversation is idle for a longer period of time, 
-  //   // create embeddings and store them. 
-
-  //   // // console.log(`Got a request with text: ${prompt.text}`)
-  //   // await delay(1000);
-  //   let response = await this.llmService.chain(SessionDto.toObject(session));
-  //   return { message: response.replace(new RegExp("^(Arnold(?:\\sSchwarzenegger)?\\:)", "i"), "") };
-  // }
-
-  // @Post("/InitialMessage")
-  // async initialMessage (@Body() : InitialMessageDto) {
-  //   return await this.llmService.getInitialMessage();
-  //   return {
-  //     message: 'Hello Coach!',
-  //     date: new Date(),
-  //   };
-  // }
 
   @Post("endsession")
-  async endSession(@Body() session: SessionDto) {
-    return await this.llmService.storeSession(SessionDto.toObject(session));
+  async endSession(@Body() sessionDto: SessionDto) {
+    const session = SessionDto.toObject(sessionDto);
+    const filter = { Id: session.Id };
+    await this.sessionCollection.updateMany(filter, { $set:session }, { upsert: true });
+    await this.llmService.storeSession(session);
   }
 }
