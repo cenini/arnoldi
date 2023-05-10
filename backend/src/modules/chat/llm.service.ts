@@ -9,6 +9,7 @@ import { VectorStore } from 'langchain/vectorstores/base';
 import { ChainTool, SerpAPI } from "langchain/tools";
 import { Document } from "langchain/document";
 import { Session, Sender } from '../models/Session.js';
+import { Collection } from 'mongodb';
 
 async function createDocumentsFromSession(session: Session): Promise<Document<Record<string, any>>[]> {
   const documents: Document<Record<string, any>>[] = [];
@@ -39,12 +40,13 @@ export class LlmService implements OnModuleInit {
   public isInitialized: boolean = false;
 
   constructor(
-    @Inject('OpenAI') private readonly model: OpenAI,
-    @Inject('ChatOpenAI') private readonly chat: ChatOpenAI,
-    @Inject('ChatStore') private readonly chatStore: VectorStore,
-    @Inject('CoachingStore') private readonly coachingStore: VectorStore,
-    @Inject('ArnoldStore') private readonly arnoldStore: VectorStore)
-   {}
+    @Inject("OpenAI") private readonly model: OpenAI,
+    @Inject("ChatOpenAI") private readonly chat: ChatOpenAI,
+    @Inject("ChatStore") private readonly chatStore: VectorStore,
+    @Inject("CoachingStore") private readonly coachingStore: VectorStore,
+    @Inject("ArnoldStore") private readonly arnoldStore: VectorStore,
+    @Inject("SessionCollection") private readonly sessionCollection: Collection<Session>
+    ) {}
 
   async onModuleInit(): Promise<void> {
     const chatPrompt = ChatPromptTemplate.fromPromptMessages([
@@ -86,6 +88,7 @@ export class LlmService implements OnModuleInit {
     // /* Create the chain */
     // this.crc = ConversationalRetrievalQAChain.fromLLM(
     //   this.model,
+
     //   this.vectorStore.asRetriever()
     // );
     // this.crc.memory = new BufferMemory({ returnMessages: true, memoryKey: "history" });

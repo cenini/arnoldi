@@ -80,7 +80,7 @@
 
   function getUserId(): string {
     const email = $page.data.session?.user?.email;
-    return (email === undefined || email === null) ? "temp" : email;  // Temp should be replaced by cookie as fallback later
+    return (email === undefined || email === null) ? generateUUID() : email;
   }
 
   async function sendSession(): Promise<string>{
