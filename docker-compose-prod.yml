@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   frontend:
+    restart: unless-stopped
     image: ninipriv/aime:frontend_latest
     environment:
       - PORT=3000
@@ -16,6 +17,7 @@ services:
     networks:
       - arnoldi
   backend:
+    restart: unless-stopped
     image: ninipriv/aime:backend_latest
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -34,6 +36,7 @@ services:
     depends_on:
       - mongo
   nginx:
+    restart: unless-stopped  
     image: nginx:stable
     container_name: nginx
     volumes:
@@ -49,6 +52,7 @@ services:
         condition: service_healthy
 
   chroma:
+    restart: unless-stopped
     image: ninipriv/chroma-server:latest
     # build:
     #   context: .
@@ -69,6 +73,7 @@ services:
       - arnoldi
 
   clickhouse:
+    restart: unless-stopped
     image: clickhouse/clickhouse-server:22.9-alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -87,7 +92,7 @@ services:
 
   mongo:
     image: mongo
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
