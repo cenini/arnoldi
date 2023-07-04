@@ -18,7 +18,7 @@
   }
 
   function updateMegaMode() {
-    megaMode.update(currentValue => !currentValue);
+    megaMode.update(megaModeValue => !megaModeValue);
   }
 
 </script>
