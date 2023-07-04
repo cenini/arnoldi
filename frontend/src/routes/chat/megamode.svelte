@@ -4,7 +4,7 @@
   import { themeChange } from 'theme-change'
   import { megaMode } from '../../stores';
 
-  let megaModeValue: boolean;
+  export let megaModeValue: boolean;
 
   onMount(() => {
     themeChange(false)

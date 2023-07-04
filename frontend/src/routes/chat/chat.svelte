@@ -35,6 +35,7 @@
   let input: HTMLInputElement;
   let newInputValue = '';
   let readyToSend = true;
+  let megaModeEnabled = false;
 
   function getChatStartOrEnd(message: Message) {
     return message.sender == Sender.User ? 'chat chat-start' : 'chat chat-end';
@@ -84,12 +85,14 @@
   }
 
   async function sendSession(): Promise<string>{
+    console.log(megaModeEnabled)
     const response = await fetch(`${env.PUBLIC_BACKEND_URL}/chat`, { 
       method: 'POST',
       body: JSON.stringify({
         messages: messages,
         id: sessionId,
-        userId: getUserId() 
+        userId: getUserId(),
+        generateVoiceOver: megaModeEnabled
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -122,8 +125,7 @@
           arnoldi
         </div>
         <div class="justify-self-end" style="align-self: end;">
-          <Megamode />
-          <!-- <Megamode /> -->
+          <Megamode bind:megaModeValue={megaModeEnabled} />
         </div>
       </div>
     </div>                        
