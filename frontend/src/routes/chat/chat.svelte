@@ -3,7 +3,7 @@
   import { env } from '$env/dynamic/public';
   import { page } from '$app/stores';
 	import Megamode from "./megamode.svelte";
-  import { v4 as uuidv4 } from 'uuid';
+  import { generateUUID } from '../utils/uuid';
 
   interface Session {
     Messages: Message[];
@@ -19,14 +19,6 @@
   enum Sender {
     User,
     Ai
-  }
-
-  function generateUUID() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-      return crypto.randomUUID();
-    } else {
-      return uuidv4();
-    }
   }
 
   export let messages: Message[] = [];
@@ -80,7 +72,7 @@
 
   function getUserId(): string {
     const email = $page.data.session?.user?.email;
-    return (email === undefined || email === null) ? generateUUID() : email;
+    return (email === undefined || email === null) ? ($page.data.userIdFallback ?? generateUUID()) : email;
   }
 
   async function sendSession(): Promise<string>{
