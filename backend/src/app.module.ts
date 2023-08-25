@@ -4,9 +4,10 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ChatModule } from './modules/chat/chat.module.js';
 import { PineconeClient } from "@pinecone-database/pinecone";
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
-  imports: [ ConfigModule.forRoot(), ChatModule],
+  imports: [ ConfigModule.forRoot(), LoggerModule.forRoot(), ChatModule],
   controllers: [AppController],
   providers: [
     AppService,
