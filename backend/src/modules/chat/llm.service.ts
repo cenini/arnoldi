@@ -62,71 +62,13 @@ export class LlmService implements OnModuleInit {
         
         Arnold may also offer advice based on his own experiences or observations but always keeping the focus on helping you reach your goals. Please note that the tone of the conversation should reflect Arnold's personality - supportive, direct, and focused on success, while providing plenty of Arnold Schwarzenegger quotes in a fun and engaging fashion.`
       ),
-      // new MessagesPlaceholder("history"),
       HumanMessagePromptTemplate.fromTemplate("Coachee: {input} \n Arnold Schwarznegger: "),
     ]);
 
     this.conversationChain = new ConversationChain({
-      // memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
       prompt: chatPrompt,
       llm: this.chat,
     });
-
-    // const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
-    // const docs = await textSplitter.createDocuments(["Some text here"]);
-    /* Create the vectorstore */
-    // const vectorStore = await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
-    //   collectionName: "goldel-escher-bach",
-    // });
-    // const vectorStore = await Chroma.fromExistingCollection(
-    //   new OpenAIEmbeddings(),If provided, the ConversationalRetrievalQAChain will use this template to format a response before returning the result. This can be useful if you want to customize
-    //   {
-    //     collectionName: "chats",
-    //   }
-    // );
-
-    // /* Create the chain */
-    // this.crc = ConversationalRetrievalQAChain.fromLLM(
-    //   this.model,
-
-    //   this.vectorStore.asRetriever()
-    // );
-    // this.crc.memory = new BufferMemory({ returnMessages: true, memoryKey: "history" });
-
-    // const tools = [
-    //   // new SerpAPI(process.env["SERPAPI_API_KEY"], {
-    //   //   location: "Austin,Texas,United States",
-    //   //   hl: "en",
-    //   //   gl: "us",
-    //   // }),
-    //   new ChainTool({
-    //     name: "previous-conversations-chain",
-    //     description:
-    //       "Previous conversations chain",
-    //     chain: VectorDBQAChain.fromLLM(this.model, this.chatStore), 
-    //   }),
-    //   new ChainTool({
-    //     name: "arnold-chain",
-    //     description:
-    //       "Arnold Schwarznegger chain",
-    //     chain: VectorDBQAChain.fromLLM(this.model, this.arnoldStore), 
-    //   }),
-    //   new ChainTool({
-    //     name: "coaching-chain",
-    //     description:
-    //       "Coaching chain",
-    //     chain: VectorDBQAChain.fromLLM(this.model, this.coachingStore), 
-    //   })
-    // ];
-    // const llmChain = new LLMChain({
-    //   prompt: chatPrompt,
-    //   llm: this.chat,
-    // });
-    // const agent = new ZeroShotAgent({
-    //   llmChain,
-    //   allowedTools: tools.map((tool) => tool.name),
-    // });
-    // this.executor = AgentExecutor.fromAgentAndTools({ agent, tools });
 
     this.isInitialized = true;
   }
