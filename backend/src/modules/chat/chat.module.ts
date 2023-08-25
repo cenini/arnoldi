@@ -9,7 +9,7 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { ChatController } from './chat.controller.js';
 import { LlmService } from './llm.service.js';
 import { Collection, MongoClient } from 'mongodb';
-import { Session } from '../models/Session.js';
+import { Session } from './Session.js';
 
 const chatCollection = "arnoldi-chats";
 const coachingCollection = "arnoldi-coaching";

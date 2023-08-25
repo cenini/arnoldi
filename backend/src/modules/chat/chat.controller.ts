@@ -3,7 +3,7 @@ import { LlmService } from './llm.service.js';
 import { PromptDto } from './prompt.dto.js';
 import { MessageDto, SessionDto } from './session.dto.js';
 import { Collection, ObjectId } from 'mongodb';
-import { Session } from '../models/Session.js';
+import { Session } from './Session.js';
 
 function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );

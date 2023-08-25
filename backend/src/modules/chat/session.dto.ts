@@ -1,5 +1,5 @@
 import { ArrayMinSize, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
-import { Message, Sender, Session } from '../models/Session.js';
+import { Message, Sender, Session } from './Session.js';
 
 function senderDtoToObject(dto: SenderDto): Sender {
   return dto == SenderDto.User ? Sender.User : Sender.Ai;

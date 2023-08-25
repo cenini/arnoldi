@@ -8,7 +8,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { VectorStore } from 'langchain/vectorstores/base';
 import { ChainTool, SerpAPI } from "langchain/tools";
 import { Document } from "langchain/document";
-import { Session, Sender } from '../models/Session.js';
+import { Session, Sender } from './Session.js';
 import { Collection } from 'mongodb';
 
 async function createDocumentsFromSession(session: Session): Promise<Document<Record<string, any>>[]> {
