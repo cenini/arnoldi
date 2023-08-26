@@ -5,9 +5,22 @@ import { AppService } from './app.service.js';
 import { ChatModule } from './modules/chat/chat.module.js';
 import { PineconeClient } from "@pinecone-database/pinecone";
 import { LoggerModule } from 'nestjs-pino';
+import pino from 'pino';
 
 @Module({
-  imports: [ ConfigModule.forRoot(), LoggerModule.forRoot(), ChatModule],
+  imports: [ 
+    ConfigModule.forRoot(), 
+    LoggerModule.forRoot({
+      pinoHttp: {
+        stream: pino.destination({
+          // dest: './out.log',
+          minLength: 4096, // Buffer
+          sync: false,
+        }),
+      },
+    }), 
+    ChatModule
+  ],
   controllers: [AppController],
   providers: [
     AppService,

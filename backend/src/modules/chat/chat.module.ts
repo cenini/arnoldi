@@ -36,7 +36,6 @@ export async function buildVectorStoreFromTexts(indexName: string, texts: string
         {
           provide: "SessionCollection",
           useFactory: async () => {
-            console.log(process.env["MONGO_CONNECTION_STRING"])
             const client = new MongoClient(process.env["MONGO_CONNECTION_STRING"]);
             await client.connect();
             const db = client.db("arnoldi");
