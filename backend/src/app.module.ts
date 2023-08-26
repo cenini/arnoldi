@@ -23,19 +23,19 @@ import pino from 'pino';
   ],
   controllers: [AppController],
   providers: [
-    AppService,
-    {
-      provide: 'Pinecone',
-      useFactory: async () => {
-        const pinecone = new PineconeClient();
-        // Could also init in the places where it is injected but...
-        await pinecone.init({
-          environment: process.env.ENVIRONMENT,
-          apiKey: process.env.PINECONE_API_KEY,
-        })
-        return pinecone;
-      },
-    },
+    AppService, 
+    // {
+    //   provide: 'Pinecone',
+    //   useFactory: async () => {
+    //     const pinecone = new PineconeClient();
+    //     // Could also init in the places where it is injected but...
+    //     await pinecone.init({
+    //       environment: process.env.ENVIRONMENT,
+    //       apiKey: process.env.PINECONE_API_KEY,
+    //     })
+    //     return pinecone;
+    //   },
+    // },
   ],
 })
 export class AppModule {}
