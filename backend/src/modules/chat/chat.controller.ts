@@ -41,13 +41,18 @@ export class ChatController {
       let response = await this.llmService.chain(session);      
       return { message: response.replace(new RegExp("^(Arnold(?:\\sSchwarzenegger)?\\:)", "i"), "") };
     } catch (e) {
-      throw new InternalServerErrorException()
+      throw new InternalServerErrorException('Failed to publish session')
     }
   }
 
   @Post("endsession")
   async endSession(@Body() sessionDto: SessionDto) {
-    const session = SessionDto.toObject(sessionDto);
+    let session: Session
+    try {
+      session = SessionDto.toObject(sessionDto); 
+    } catch (e) {
+      throw new HttpException('Could not create session from request', HttpStatus.BAD_REQUEST)
+    }
     const filter = { Id: session.Id };
     await this.sessionCollection.updateMany(filter, { $set:session }, { upsert: true });
     await this.llmService.storeSession(session);
