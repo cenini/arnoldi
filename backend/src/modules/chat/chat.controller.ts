@@ -55,6 +55,6 @@ export class ChatController {
     }
     const filter = { Id: session.Id };
     await this.sessionCollection.updateMany(filter, { $set:session }, { upsert: true });
-    await this.llmService.storeSession(session);
+    await this.llmService.vectorize(session);
   }
 }

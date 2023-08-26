@@ -102,7 +102,7 @@ export class LlmService implements OnModuleInit {
     return (await this.conversationChain?.call({input: conversation })).response as string;
   }
 
-  async storeSession(session: Session) {
+  async vectorize(session: Session) {
     // this.chatStore.addDocuments(await createDocumentsFromSession(session));
   }
 }
