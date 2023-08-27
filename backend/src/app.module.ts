@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { ChatModule } from './modules/chat/chat.module.js';
-import { PineconeClient } from "@pinecone-database/pinecone";
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ChatModule } from './modules/chat/chat.module';
+import { PineconeClient } from '@pinecone-database/pinecone';
 import { LoggerModule } from 'nestjs-pino';
 import pino from 'pino';
 
 @Module({
-  imports: [ 
-    ConfigModule.forRoot(), 
+  imports: [
+    ConfigModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
         stream: pino.destination({
@@ -18,12 +18,12 @@ import pino from 'pino';
           sync: false,
         }),
       },
-    }), 
-    ChatModule
+    }),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [
-    AppService, 
+    AppService,
     // {
     //   provide: 'Pinecone',
     //   useFactory: async () => {

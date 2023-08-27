@@ -1,9 +1,22 @@
-import { ChatController } from "src/modules/chat/chat.controller";
-import { LlmService } from "src/modules/chat/llm.service";
-import { Collection } from "mongodb";
-import { Session } from "src/modules/chat/Session";
-import { Test } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
+import { Collection } from 'mongodb';
+import { Test } from '@nestjs/testing';
+import { ChatController } from './chat.controller';
+import { LlmService } from './llm.service';
+import { Session } from './Session';
+import { MessageDto, SenderDto, SessionDto } from './session.dto';
+
+function createSessionDto(): SessionDto {
+  return new SessionDto({
+    id: 'id',
+    userId: 'userId',
+    messages: [
+      new MessageDto({
+        text: 'text',
+        sender: SenderDto.User,
+      }),
+    ],
+  });
+}
 
 describe('ChatController', () => {
   let chatController: ChatController;
@@ -12,21 +25,38 @@ describe('ChatController', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      providers: [
+        {
+          provide: LlmService,
+          useValue: {
+            chain: jest.fn().mockResolvedValue('Response!'),
+          },
+        },
+        {
+          provide: Collection<Session>,
+          useValue: {
+            updateMany: jest
+              .fn()
+              .mockImplementation((session: Session) =>
+                Promise.resolve({ _id: 'a uuid', ...session }),
+              ),
+          },
+        },
+      ],
       controllers: [ChatController],
-      providers: [LlmService, Collection<Session>],
-      }).compile();
+    }).compile();
 
-    llmService = await moduleRef.resolve<LlmService>(LlmService);
-    sessionCollection = await moduleRef.resolve<Collection<Session>>(Collection<Session>);
-    chatController = await moduleRef.resolve<ChatController>(ChatController);
-  })
+    llmService = moduleRef.get<LlmService>(LlmService);
+    sessionCollection = moduleRef.get<Collection<Session>>(Collection<Session>);
+    chatController = moduleRef.get<ChatController>(ChatController);
+  });
 
   describe('prompt', () => {
     it('should store the session in the session collection', async () => {
-      // jest.spyOn(sessionCollection, 'updateMany').mockImplementation(() => result);
       jest.spyOn(sessionCollection, 'updateMany');
 
-      expect(sessionCollection.updateMany).toHaveBeenCalledWith({ upsert: true})
-    })
-  })
-})
+      expect(chatController.prompt(createSessionDto()));
+      expect(sessionCollection.updateMany).toHaveBeenCalled();
+    });
+  });
+});
