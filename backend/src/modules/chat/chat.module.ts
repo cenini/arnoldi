@@ -3,10 +3,10 @@ import { OpenAI } from 'langchain';
 import { ChatOpenAI } from 'langchain/chat_models';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { Chroma } from 'langchain/vectorstores/chroma';
-import { ChatController } from './chat.controller';
-import { LlmService } from './llm.service';
+import { ChatController } from './chat.controller.js';
+import { LlmService } from './llm.service.js';
 import { Collection, MongoClient } from 'mongodb';
-import { Session } from './Session';
+import { Session } from './Session.js';
 
 const chatCollection = 'arnoldi-chats';
 const coachingCollection = 'arnoldi-coaching';
@@ -38,7 +38,7 @@ export async function buildVectorStoreFromTexts(
   controllers: [ChatController],
   providers: [
     {
-      provide: 'SessionCollection',
+      provide: Collection<Session>,
       useFactory: async () => {
         const client = new MongoClient(process.env['MONGO_CONNECTION_STRING']);
         await client.connect();
@@ -53,7 +53,7 @@ export async function buildVectorStoreFromTexts(
       },
     },
     {
-      provide: 'OpenAI',
+      provide: OpenAI,
       useFactory: () => {
         return new OpenAI({
           temperature: 1,
@@ -62,7 +62,7 @@ export async function buildVectorStoreFromTexts(
       },
     },
     {
-      provide: 'ChatOpenAI',
+      provide: ChatOpenAI,
       useFactory: () => {
         return new ChatOpenAI({
           temperature: 1,

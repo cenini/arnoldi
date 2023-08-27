@@ -29,7 +29,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { VectorStore } from 'langchain/vectorstores/base';
 import { ChainTool, SerpAPI } from 'langchain/tools';
 import { Document } from 'langchain/document';
-import { Session, Sender } from './Session';
+import { Session, Sender } from './Session.js';
 import { Collection } from 'mongodb';
 
 async function createDocumentsFromSession(
@@ -64,12 +64,12 @@ export class LlmService implements OnModuleInit {
   public isInitialized: boolean = false;
 
   constructor(
-    @Inject('OpenAI') private readonly model: OpenAI,
-    @Inject('ChatOpenAI') private readonly chat: ChatOpenAI,
+    @Inject(OpenAI) private readonly model: OpenAI,
+    @Inject(ChatOpenAI) private readonly chat: ChatOpenAI,
     // @Inject("ChatStore") private readonly chatStore: VectorStore,
     // @Inject("CoachingStore") private readonly coachingStore: VectorStore,
     // @Inject("ArnoldStore") private readonly arnoldStore: VectorStore,
-    @Inject('SessionCollection')
+    @Inject(Collection<Session>)
     private readonly sessionCollection: Collection<Session>,
   ) {}
 

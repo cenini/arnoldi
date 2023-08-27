@@ -1,6 +1,6 @@
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface.js';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
