@@ -1,9 +1,9 @@
 import { Collection } from 'mongodb';
 import { Test } from '@nestjs/testing';
-import { ChatController } from './chat.controller';
-import { LlmService } from './llm.service';
-import { Session } from './Session';
-import { MessageDto, SenderDto, SessionDto } from './session.dto';
+import { ChatController } from './chat.controller.js';
+import { LlmService } from './llm.service.js';
+import { Session } from './Session.js';
+import { MessageDto, SenderDto, SessionDto } from './session.dto.js';
 
 function createSessionDto(): SessionDto {
   return new SessionDto({
