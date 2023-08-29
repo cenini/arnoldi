@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
 
 export interface Session {
   Messages: Message[];
@@ -13,5 +13,5 @@ export interface Message {
 
 export enum Sender {
   User,
-  Ai
+  Ai,
 }
