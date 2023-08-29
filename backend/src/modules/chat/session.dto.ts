@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsEnum, IsString, IsUUID } from 'class-validator';
 import { Message, Sender, Session } from './Session.js';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 function senderDtoToObject(dto: SenderDto): Sender {
   return dto == SenderDto.User ? Sender.User : Sender.Ai;
@@ -50,10 +51,17 @@ export class SessionDto {
   // Add a timestamp like lastactive
 
   static toObject(dto: SessionDto): Session {
-    return {
-      Messages: dto.messages.map((m) => MessageDto.toObject(m)),
-      Id: dto.id,
-      UserId: dto.userId,
-    };
+    try {
+      return {
+        Messages: dto.messages.map((m) => MessageDto.toObject(m)),
+        Id: dto.id,
+        UserId: dto.userId,
+      };
+    } catch (e) {
+      throw new HttpException(
+        'Could not create session from request',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

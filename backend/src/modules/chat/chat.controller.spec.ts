@@ -1,7 +1,7 @@
-import { Collection } from 'mongodb';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { ChatController } from './chat.controller.js';
 import { LlmService } from './llm.service.js';
+import { Collection } from 'mongodb';
 import { Session } from './Session.js';
 import { MessageDto, SenderDto, SessionDto } from './session.dto.js';
 
@@ -24,39 +24,50 @@ describe('ChatController', () => {
   let sessionCollection: Collection<Session>;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ChatController],
       providers: [
         {
           provide: LlmService,
           useValue: {
-            chain: jest.fn().mockResolvedValue('Response!'),
+            chain: jest.fn().mockReturnValue('response'),
+            vectorize: jest.fn(),
           },
         },
-        {
-          provide: Collection<Session>,
-          useValue: {
-            updateMany: jest
-              .fn()
-              .mockImplementation((session: Session) =>
-                Promise.resolve({ _id: 'a uuid', ...session }),
-              ),
-          },
-        },
+        { provide: Collection<Session>, useValue: { updateMany: jest.fn() } },
       ],
-      controllers: [ChatController],
     }).compile();
 
-    llmService = moduleRef.get<LlmService>(LlmService);
-    sessionCollection = moduleRef.get<Collection<Session>>(Collection<Session>);
-    chatController = moduleRef.get<ChatController>(ChatController);
+    chatController = module.get<ChatController>(ChatController);
+    llmService = module.get<LlmService>(LlmService);
+    sessionCollection = module.get<Collection<Session>>(Collection);
   });
 
-  describe('prompt', () => {
-    it('should store the session in the session collection', async () => {
-      jest.spyOn(sessionCollection, 'updateMany');
+  it('should call updateMany and llmService.chain on POST request', async () => {
+    const sessionDto = createSessionDto();
 
-      expect(chatController.prompt(createSessionDto()));
-      expect(sessionCollection.updateMany).toHaveBeenCalled();
+    await chatController.prompt(sessionDto);
+
+    expect(sessionCollection.updateMany).toHaveBeenCalled();
+    expect(llmService.chain).toHaveBeenCalled();
+  });
+
+  it('should call updateMany and llmService.vectorize on POST endsession request', async () => {
+    const sessionDto = createSessionDto();
+
+    await chatController.endSession(sessionDto);
+
+    expect(sessionCollection.updateMany).toHaveBeenCalled();
+    expect(llmService.vectorize).toHaveBeenCalled();
+  });
+
+  it('should not throw when updating the session collection fails', async () => {
+    const sessionDto = createSessionDto();
+    jest.spyOn(sessionCollection, 'updateMany').mockImplementation(() => {
+      throw new Error('Failed to update');
     });
+
+    await chatController.prompt(sessionDto);
+    await chatController.endSession(sessionDto);
   });
 });
