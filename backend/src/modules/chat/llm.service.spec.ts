@@ -4,7 +4,6 @@ import { OpenAI } from 'langchain';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { Collection } from 'mongodb';
 import { Message, Sender, Session } from './Session.js';
-import { ConversationChainFactory } from './ConversationChainFactory.js';
 
 function createSession(): Session {
   return {
@@ -17,12 +16,19 @@ function createSession(): Session {
   } as Session;
 }
 
+jest.mock('langchain/chains', () => {
+  return {
+    ConversationChain: jest.fn().mockImplementation(() => {
+      return { call: jest.fn().mockReturnValue({ response: 'result' }) };
+    }),
+  };
+});
+
 describe('LlmService', () => {
   let llmService: LlmService;
   let model: OpenAI;
   let chat: ChatOpenAI;
   let sessionCollection: Collection<Session>;
-  let conversationChainFactory: ConversationChainFactory;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +37,6 @@ describe('LlmService', () => {
         { provide: OpenAI, useValue: { call: jest.fn() } },
         { provide: ChatOpenAI, useValue: {} },
         { provide: Collection<Session>, useValue: {} },
-        ConversationChainFactory,
       ],
     }).compile();
 
@@ -52,15 +57,24 @@ describe('LlmService', () => {
 
   it('should call model.call method', async () => {
     const prompt = 'test prompt';
+
     await llmService.call(prompt);
+
     expect(model.call).toHaveBeenCalledWith(prompt);
   });
 
+  it('should be initialized after initialization', async () => {
+    llmService.onModuleInit();
+
+    expect(llmService.isInitialized).toBe(true);
+  });
+
   it('should return chain conversation', async () => {
-    llmService.isInitialized = true;
+    await llmService.onModuleInit();
     const session: Session = createSession();
+
     const result = await llmService.chain(session);
-    expect(result).toContain('User: Hello');
-    expect(result).toContain('Arnold Schwarzenegger: Hello');
+
+    expect(result).toContain('result');
   });
 });
